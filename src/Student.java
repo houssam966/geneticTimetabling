@@ -1,17 +1,12 @@
 public class Student {
-    int[] classes;
+    int[] modules;
+    int[] required;
+    int[] preferences;
 
     //TODO add preferences
-    public Student(int[] classes){
-        this.classes = classes;
+    public Student(int[] modules, int numberOfClasses){
+        this.modules = modules;
+        required = new int[numberOfClasses];
     }
 
-    public boolean hasClass(int classId){
-        for (int i = 0; i < classes.length; i++) {
-            if(classId == classes[i]){
-                return true;
-            }
-        }
-        return false;
-    }
 }
