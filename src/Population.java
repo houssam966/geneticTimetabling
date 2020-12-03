@@ -14,6 +14,7 @@ public class Population {
     int maxGenerations;
     int[] solution;
     Pair[] clashes;
+    float[] preferences;
 
     public Population(Student[] students, Activity[] classes, Module[] modules, float mutationRate, int populationSize, int maxGenerations){
         this.mutationRate = mutationRate;
@@ -21,7 +22,7 @@ public class Population {
         this.students = students;
         this.classes = classes;
         this.modules = modules;
-
+        preferences = new float[students.length*classes.length];
 
         matingPool = new ArrayList<>();
         finished = false;
@@ -33,18 +34,18 @@ public class Population {
     void initialize(){
         Manager manager = new Manager();
 
-        //assign required classes to students
+
         for (int i = 0; i < students.length; i++) {
-            manager.assignClasses(students[i], classes);
+            manager.assignClasses(students[i], classes); //assign required classes to students
         }
 
         //get clashes vector
-       clashes =  manager.getClashes(classes,students,students.length);
+        clashes =  manager.getClashes(classes,students,students.length);
+        preferences = manager.getStudentPreferences(students, classes);
 
-        //TODO:assign preferences
 
         for (int i = 0; i < population.length; i++) {
-            population[i] = new DNA(students.length, classes.length, modules.length ,students, classes, modules,  clashes);
+            population[i] = new DNA(students.length, classes.length, modules.length ,students, classes, modules, clashes, preferences);
         }
 
     }
@@ -160,7 +161,7 @@ public class Population {
 
         Module[] modules = {
                 new Module("HCI", true, true),
-                new Module("AIP", true, true),
+                new Module("AIP", true, false),
                 new Module("AIN", true, true),
                 new Module("VER", true, true),
         };
@@ -189,15 +190,15 @@ public class Population {
         };
 
         Student[] students = {
-                new Student(new int[]{1,1,1,0}, classes.length), // takes HCI, AIP and AIN
-                new Student(new int[]{1,1,1,0}, classes.length), // takes HCI, AIP and AIN
+                new Student(new int[]{1,1,1,0}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and AIN
+                new Student(new int[]{1,1,1,0}, classes.length, new int[]{0,5,0,0,0}), // takes HCI, AIP and AIN
 
-                new Student(new int[]{0,1,1,1}, classes.length), // takes AIP and AIN, and VER
-                new Student(new int[]{0,1,1,1}, classes.length), // takes AIP and AIN, and VER
+                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,5,0,0}), // takes AIP and AIN, and VER
+                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,0,5,0}), // takes AIP and AIN, and VER
 
-                new Student(new int[]{1,0,1,1}, classes.length), // takes HCI, AIN and VER
+                new Student(new int[]{1,0,1,1}, classes.length, new int[]{0,0,0,0,5}), // takes HCI, AIN and VER
 
-                new Student(new int[]{1,1,0,1}, classes.length), // takes HCI, AIP and VER
+                new Student(new int[]{1,1,0,1}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and VER
         };
 
 

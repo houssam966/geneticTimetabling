@@ -60,4 +60,29 @@ public class Manager {
 
         return clashes.toArray(new Pair[clashes.size()]);
     }
+
+    float[] getStudentPreferences(Student[] students, Activity[] classes){
+        int numberOfStudents = students.length;
+        int numberOfClasses = classes.length;
+        int timetableSize = numberOfStudents*numberOfClasses;
+        float[] preferences = new float[timetableSize];
+
+        for (int i = 0; i < timetableSize ; i++) {
+            int studentNumber = i % numberOfStudents;
+            int classNumber = i / numberOfStudents;
+            int dayNumber = getDayNumber(classes[classNumber].day);
+            preferences[i] = students[studentNumber].dayPreferences[dayNumber] * 0.2f; //TODO add other soft constraints here
+        }
+        return preferences;
+    }
+    int getDayNumber(String day){
+        switch (day){
+            case("Mon"): return 0;
+            case ("Tue"): return 1;
+            case ("Wed"): return 2;
+            case ("Thu"): return 3;
+            case ("Fri"): return 4;
+            default: return 0;
+        }
+    }
 }

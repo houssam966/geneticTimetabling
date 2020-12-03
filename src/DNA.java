@@ -8,8 +8,9 @@ public class DNA {
     Activity[] classes;
     Module[] modules;
     Pair[] clashes;
+    float[] preferences;
 
-    public DNA(int numberOfStudents, int numberOfClasses, int numberOfModules, Student[] students, Activity[] classes, Module[] modules, Pair[] clashes){
+    public DNA(int numberOfStudents, int numberOfClasses, int numberOfModules, Student[] students, Activity[] classes, Module[] modules, Pair[] clashes, float[] preferences){
         this.numberOfClasses = numberOfClasses;
         this.numberOfStudents = numberOfStudents;
         this.numberOfModules = numberOfModules;
@@ -17,6 +18,7 @@ public class DNA {
         this.classes = classes;
         this.modules = modules;
         this.clashes = clashes;
+        this.preferences = preferences;
 
         size = numberOfClasses * numberOfStudents;
         timetable = new int[size];
@@ -59,6 +61,8 @@ public class DNA {
             } else{
                 tutorialCount[moduleStudentIndex]+=assigned;
             }
+
+            fitness += preferences[i]*assigned*0.02; //soft constraints(day, time, TA)
 //
 //            if(assigned == 1){
 //
@@ -139,7 +143,7 @@ public class DNA {
     // Crossover
     public DNA crossover(DNA partner) {
         // A new child
-        DNA child = new DNA(numberOfStudents, numberOfClasses, numberOfModules, students, classes, modules, clashes);
+        DNA child = new DNA(numberOfStudents, numberOfClasses, numberOfModules, students, classes, modules, clashes, preferences);
         Random r = new Random();
         int midpoint = r.nextInt(timetable.length); // Pick a midpoint
 
