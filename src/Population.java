@@ -152,123 +152,123 @@ public class Population {
         return generations;
     }
 
-    public static void main(String[] args){
-        long start = System.currentTimeMillis();
-        int popmax = 50;
-        int maxGenerations = 1000;
-        float mutationRate = 0.01f;
-        Manager manager = new Manager();
-
-        Module[] modules = {
-                new Module("HCI", true, true),
-                new Module("AIP", true, false),
-                new Module("AIN", true, true),
-                new Module("VER", true, true),
-        };
-
-        Activity[] classes = {
-                //MON
-                new Activity("11:00:00","12:00:00", "Mon", "Tutorial", "Petr", 0), //HCI 0
-                new Activity("11:00:00","13:00:00", "Mon", "Practical", "Amanda",1), //AIP 1
-                new Activity("12:00:00","14:00:00", "Mon", "Practical", "Amanda",1), //AIP 2
-                new Activity("17:00:00","18:00:00", "Mon", "Tutorial", "Mcburney",2), //AIN 3
-                //TUE
-                new Activity("09:00:00","11:00:00", "Tue", "Practical", "Petr",0), //HCI 4
-                new Activity("11:00:00","12:00:00", "Tue", "Practical", "Mcburney",2), //AIN 5
-                new Activity("12:00:00","13:00:00", "Tue", "Practical", "Mcburney",2), //AIN 6
-                new Activity("13:00:00","14:00:00", "Tue", "Practical", "Mcburney",2), //AIN 7
-                new Activity("15:00:00","16:00:00", "Tue", "Practical", "Mcburney",2), //AIN 8
-                new Activity("16:00:00","18:00:00", "Tue", "Practical", "Hannah",3), //VER 9
-                //WED
-                new Activity("09:00:00","11:00:00", "Wed", "Practical", "Amanda",1), //AIP 10
-                new Activity("11:00:00","13:00:00", "Wed", "Practical", "Amanda",1), //AIP 11
-                new Activity("11:00:00","13:00:00", "Wed", "Practical", "Petr",0), //HCI 12
-                //THU
-                new Activity("10:00:00","12:00:00", "Thu", "Practical", "Hannah",3), //VER 13
-                //FRI
-                new Activity("14:00:00","16:00:00", "Fri", "Practical", "Petr",0), //HCI 14
-        };
-
-        Student[] students = {
-                new Student(new int[]{1,1,1,0}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and AIN
-                new Student(new int[]{1,1,1,0}, classes.length, new int[]{0,5,0,0,0}), // takes HCI, AIP and AIN
-
-                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,5,0,0}), // takes AIP and AIN, and VER
-                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,0,5,0}), // takes AIP and AIN, and VER
-
-                new Student(new int[]{1,0,1,1}, classes.length, new int[]{0,0,0,0,5}), // takes HCI, AIN and VER
-
-                new Student(new int[]{1,1,0,1}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and VER
-        };
-
-
-//        Student[] students = new Student[300];
-//        for (int i = 0; i < 300; i++) {
-//            if(i<100){
-//                students[i] = new Student(new Module[]{modules[0], modules[1], modules[2]});
-//            } else if( i<200){
-//                students[i] = new Student(new Module[]{modules[1], modules[2], modules[3]});
-//            } else{
-//                students[i] = new Student(new Module[]{modules[0], modules[1], modules[3]});
-//            }
+//    public static void main(String[] args){
+//        long start = System.currentTimeMillis();
+//        int popmax = 50;
+//        int maxGenerations = 1000;
+//        float mutationRate = 0.01f;
+//        Manager manager = new Manager();
+//
+//        Module[] modules = {
+//                new Module("HCI", true, true),
+//                new Module("AIP", true, false),
+//                new Module("AIN", true, true),
+//                new Module("VER", true, true),
+//        };
+//
+//        Activity[] classes = {
+//                //MON
+//                new Activity("11:00:00","12:00:00", "Mon", "Tutorial", "Petr", 0), //HCI 0
+//                new Activity("11:00:00","13:00:00", "Mon", "Practical", "Amanda",1), //AIP 1
+//                new Activity("12:00:00","14:00:00", "Mon", "Practical", "Amanda",1), //AIP 2
+//                new Activity("17:00:00","18:00:00", "Mon", "Tutorial", "Mcburney",2), //AIN 3
+//                //TUE
+//                new Activity("09:00:00","11:00:00", "Tue", "Practical", "Petr",0), //HCI 4
+//                new Activity("11:00:00","12:00:00", "Tue", "Practical", "Mcburney",2), //AIN 5
+//                new Activity("12:00:00","13:00:00", "Tue", "Practical", "Mcburney",2), //AIN 6
+//                new Activity("13:00:00","14:00:00", "Tue", "Practical", "Mcburney",2), //AIN 7
+//                new Activity("15:00:00","16:00:00", "Tue", "Practical", "Mcburney",2), //AIN 8
+//                new Activity("16:00:00","18:00:00", "Tue", "Practical", "Hannah",3), //VER 9
+//                //WED
+//                new Activity("09:00:00","11:00:00", "Wed", "Practical", "Amanda",1), //AIP 10
+//                new Activity("11:00:00","13:00:00", "Wed", "Practical", "Amanda",1), //AIP 11
+//                new Activity("11:00:00","13:00:00", "Wed", "Practical", "Petr",0), //HCI 12
+//                //THU
+//                new Activity("10:00:00","12:00:00", "Thu", "Practical", "Hannah",3), //VER 13
+//                //FRI
+//                new Activity("14:00:00","16:00:00", "Fri", "Practical", "Petr",0), //HCI 14
+//        };
+//
+//        Student[] students = {
+//                new Student(new int[]{1,1,1,0}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and AIN
+//                new Student(new int[]{1,1,1,0}, classes.length, new int[]{0,5,0,0,0}), // takes HCI, AIP and AIN
+//
+//                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,5,0,0}), // takes AIP and AIN, and VER
+//                new Student(new int[]{0,1,1,1}, classes.length, new int[]{0,0,0,5,0}), // takes AIP and AIN, and VER
+//
+//                new Student(new int[]{1,0,1,1}, classes.length, new int[]{0,0,0,0,5}), // takes HCI, AIN and VER
+//
+//                new Student(new int[]{1,1,0,1}, classes.length, new int[]{5,0,0,0,0}), // takes HCI, AIP and VER
+//        };
+//
+//
+////        Student[] students = new Student[300];
+////        for (int i = 0; i < 300; i++) {
+////            if(i<100){
+////                students[i] = new Student(new Module[]{modules[0], modules[1], modules[2]});
+////            } else if( i<200){
+////                students[i] = new Student(new Module[]{modules[1], modules[2], modules[3]});
+////            } else{
+////                students[i] = new Student(new Module[]{modules[0], modules[1], modules[3]});
+////            }
+////        }
+//
+//
+//
+//        /**
+//         * TODO:
+//         * instead of computing the fitness for each student by going to the object and checking the time + size  etc etc
+//         * just find which combination of rows is closet to optimal for a given student
+//         * so encode them in terms of the 0's and 1s
+//         * one possible initial population is one where it satisfies all the soft constraints
+//         */
+//        /**
+//         * Students should be initialized with modules and each module has classes
+//         */
+//        /**
+//         * class 0: 0,2,4,5
+//         * class 1: 0,1,2,3,5
+//         * class 2: 0,1,2,3,4
+//         * class 3: 1,3,4,5
+//         */
+//
+//
+//        //maybe the order of operators will depend on how close we are to the optimal solution
+//        //so if we are close (high average fitness) reduce the probability of mutation
+//        // if all fitnesses look fairly similar, increase mutation so we dont get stuck
+//        //make all these variables dynamic
+//
+//        Population population = new Population(students, classes, modules, mutationRate, popmax, maxGenerations);
+//        //initialize population
+//        population.initialize();
+//        population.calculateFitness();
+//
+//        System.out.println("Initial Max Fitness = " + population.getMaxFitness());
+//        System.out.println("Initial Average Fitness = " + population.getAverageFitness());
+//
+//        while(!population.finished){
+//            // Generate mating pool
+//            population.naturalSelection();
+//            //Create next generation
+//            population.generate();
+//            //Mutate
+//            population.mutate();
+//            // Calculate fitness
+//            population.calculateFitness();
 //        }
-
-
-
-        /**
-         * TODO:
-         * instead of computing the fitness for each student by going to the object and checking the time + size  etc etc
-         * just find which combination of rows is closet to optimal for a given student
-         * so encode them in terms of the 0's and 1s
-         * one possible initial population is one where it satisfies all the soft constraints
-         */
-        /**
-         * Students should be initialized with modules and each module has classes
-         */
-        /**
-         * class 0: 0,2,4,5
-         * class 1: 0,1,2,3,5
-         * class 2: 0,1,2,3,4
-         * class 3: 1,3,4,5
-         */
-
-
-        //maybe the order of operators will depend on how close we are to the optimal solution
-        //so if we are close (high average fitness) reduce the probability of mutation
-        // if all fitnesses look fairly similar, increase mutation so we dont get stuck
-        //make all these variables dynamic
-
-        Population population = new Population(students, classes, modules, mutationRate, popmax, maxGenerations);
-        //initialize population
-        population.initialize();
-        population.calculateFitness();
-
-        System.out.println("Initial Max Fitness = " + population.getMaxFitness());
-        System.out.println("Initial Average Fitness = " + population.getAverageFitness());
-
-        while(!population.finished){
-            // Generate mating pool
-            population.naturalSelection();
-            //Create next generation
-            population.generate();
-            //Mutate
-            population.mutate();
-            // Calculate fitness
-            population.calculateFitness();
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println("Final Max Fitness = " + population.getMaxFitness());
-        System.out.println("Final Average Fitness = " + population.getAverageFitness());
-        System.out.println("Total Generations = " + population.getGenerations());
-        System.out.println("Time taken " + (end - start) + "ms");
-        System.out.println("===================================");
-        System.out.println("Fittest Solution: ");
-        population.getFittest().print();
-
-        System.out.println("\n===================================");
-//        population.getFittest().printConstraints();
-
-        population.print();
-    }
+//
+//        long end = System.currentTimeMillis();
+//        System.out.println("Final Max Fitness = " + population.getMaxFitness());
+//        System.out.println("Final Average Fitness = " + population.getAverageFitness());
+//        System.out.println("Total Generations = " + population.getGenerations());
+//        System.out.println("Time taken " + (end - start) + "ms");
+//        System.out.println("===================================");
+//        System.out.println("Fittest Solution: ");
+//        //population.getFittest().print();
+//
+//        System.out.println("\n===================================");
+////        population.getFittest().printConstraints();
+//
+//        population.print();
+//    }
 }

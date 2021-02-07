@@ -207,6 +207,22 @@ public class DNA {
         }
     }
 
+    public int getNumberOfClasses() {
+        return numberOfClasses;
+    }
+
+    public int getNumberOfStudents() {
+        return numberOfStudents;
+    }
+
+    public int[] getTimetable() {
+        return timetable;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
     public float getFitness() {
         return fitness;
     }
