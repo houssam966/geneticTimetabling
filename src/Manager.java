@@ -70,8 +70,13 @@ public class Manager {
         for (int i = 0; i < timetableSize ; i++) {
             int studentNumber = i % numberOfStudents;
             int classNumber = i / numberOfStudents;
-            int dayNumber = getDayNumber(classes[classNumber].day);
-            preferences[i] = students[studentNumber].dayPreferences[dayNumber] * 0.2f; //TODO add other soft constraints here
+            Activity activity = classes[classNumber];
+            Student student = students[studentNumber];
+            int dayNumber = getDayNumber(activity.day);
+            //TODO add other soft constraints here
+            preferences[i] = student.dayPreferences[dayNumber] * 0.3f
+                    + activity.timePeriod * student.timePreferences[dayNumber] * 0.5f; //if timeperiod is 1 and student prefers 1, max
+
         }
         return preferences;
     }
