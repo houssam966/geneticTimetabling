@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c2cf1ea7-f2a0-462f-84a1-4d5513dd8a43" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Activity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Activity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Student.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TableExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TableExample.java" afterDir="false" />
-    </list>
+    <list default="true" id="c2cf1ea7-f2a0-462f-84a1-4d5513dd8a43" name="Default Changelist" comment="add input class, add time and student preferences to soft constraints" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -127,17 +121,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Application.Population" />
       <item itemvalue="Application.TableExample" />
@@ -167,8 +150,16 @@
       <workItem from="1606944081851" duration="5669000" />
       <workItem from="1612342775078" duration="19719000" />
       <workItem from="1612713643948" duration="3134000" />
-      <workItem from="1612780717050" duration="6692000" />
+      <workItem from="1612780717050" duration="6947000" />
     </task>
+    <task id="LOCAL-00001" summary="add input class, add time and student preferences to soft constraints">
+      <created>1612797825242</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1612797825242</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -211,6 +202,21 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add input class, add time and student preferences to soft constraints" />
+    <option name="LAST_COMMIT_MESSAGE" value="add input class, add time and student preferences to soft constraints" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/Reader.java" />
