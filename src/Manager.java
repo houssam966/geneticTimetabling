@@ -61,7 +61,7 @@ public class Manager {
         return clashes.toArray(new Pair[clashes.size()]);
     }
 
-    float[] getStudentPreferences(Student[] students, Activity[] classes){
+    float[] getStudentPreferences(Student[] students, Activity[] classes, Weights w){
         int numberOfStudents = students.length;
         int numberOfClasses = classes.length;
         int timetableSize = numberOfStudents*numberOfClasses;
@@ -74,11 +74,65 @@ public class Manager {
             Student student = students[studentNumber];
             int dayNumber = getDayNumber(activity.day);
             //TODO add other soft constraints here
-            preferences[i] = student.dayPreferences[dayNumber] * 0.3f
-                    + activity.timePeriod * student.timePreferences[dayNumber] * 0.5f; //if timeperiod is 1 and student prefers 1, max
+            preferences[i] = student.dayPreferences[dayNumber] * w.day
+                    + activity.timePeriod * student.timePreferences[dayNumber] * w.time; //if timeperiod is 1 and student prefers 1, max
+
+            // day is 5/7 while timePeriod is 2/7, maximum is 1.
+            // timePeriod!= preferredTimePeriod then -2/7
+            // day = -5 and timePeriod not preferred then minimum (-1)
 
         }
         return preferences;
+    }
+
+    ArrayList<Integer> getPrefferedClasses(Student student, ArrayList<Integer> moduleClasses, Activity[] allClasses, Weights w){
+        ArrayList<Integer> prefferedClasses = new ArrayList<>();
+        float maxScore = -Float.MAX_VALUE;
+        for (int i1 = 0; i1 < moduleClasses.size(); i1++) {
+            int classNumber = moduleClasses.get(i1);
+            Activity activity = allClasses[classNumber];
+            int dayNumber = getDayNumber(activity.day);
+            float score =  student.dayPreferences[dayNumber] * w.day
+                    + activity.timePeriod * student.timePreferences[dayNumber] * w.time;
+            if(score > maxScore){
+                maxScore = score;
+                //remove everything in the arraylist
+                prefferedClasses.clear();
+                prefferedClasses.add(classNumber);
+            }else if(score == maxScore){
+                prefferedClasses.add(classNumber);
+            }
+        }
+        return prefferedClasses;
+    }
+
+    ArrayList<Integer> getAssignedClasses(int studentNumber, ArrayList<Integer> moduleClasses, DNA timetable){
+        ArrayList<Integer> assignedClasses = new ArrayList<>();
+        for (int i1 = 0; i1 < moduleClasses.size(); i1++) {
+            int classNumber = moduleClasses.get(i1);
+            int studentClassIndex = classNumber * timetable.numberOfStudents + studentNumber;
+            if(timetable.timetable[studentClassIndex] == 1){
+                assignedClasses.add(classNumber);
+            }
+        }
+        return assignedClasses;
+    }
+
+    int getInaccuarteAllocations(ArrayList<Integer> prefferedClasses, ArrayList<Integer> assignedClasses){
+        int inaccuarteAllocations = 0;
+        boolean inaccurate = true;
+        int i1 = 0;
+        while (i1 < prefferedClasses.size() && inaccurate) {
+            for (int i2 = 0; i2 < assignedClasses.size(); i2++) {
+                if(prefferedClasses.get(i1) == assignedClasses.get(i2)){
+                    inaccurate = false;
+                    break;
+                }
+            }
+            i1++;
+        }
+        if(inaccurate) inaccuarteAllocations++;
+        return inaccuarteAllocations;
     }
     int getDayNumber(String day){
         switch (day){

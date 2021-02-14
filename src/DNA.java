@@ -32,7 +32,6 @@ public class DNA {
                 timetable[i] = 0;
             }
         }
-        updateFitness();
     }
 
     /**
@@ -40,10 +39,17 @@ public class DNA {
      * students should only be allocated to classes that they have
      *
      */
-    void updateFitness(){
+    void updateFitness(Weights w){
         int[] studentsPerClass = new int[numberOfClasses];
         int[] tutorialCount = new int[numberOfStudents*numberOfModules];
         int[] practicalCount = new int[numberOfStudents*numberOfModules];
+
+        float classPreferenceTotal = 0;
+        int numberOfClashes = 0;
+        int extraAllocations = 0;
+        int overAllocations = 0;
+        int incorrectAllocations = 0;
+        int missingAllocations = 0;
 
         for (int i = 0; i < timetable.length; i++) {
             int assigned = timetable[i];
@@ -52,7 +58,6 @@ public class DNA {
             int moduleNumber = classes[classNumber].moduleIndex;
 
             String type = classes[classNumber].type;
-
             studentsPerClass[classNumber]+= assigned; //if assigned would add 1, otherwise add 0
 
             int moduleStudentIndex = moduleNumber*numberOfStudents + studentNumber;
@@ -61,33 +66,7 @@ public class DNA {
             } else{
                 tutorialCount[moduleStudentIndex]+=assigned;
             }
-
-            fitness += preferences[i]*assigned*0.02; //soft constraints(day, time, TA)
-//
-//            if(assigned == 1){
-//
-//                studentsPerClass[classNumber]++;
-//
-//
-//
-//                if(students[studentNumber].required[classNumber] == 1){
-//                    //assigned and required
-//                    //TODO increase fitness
-//                } else{
-//                    //assigned and not required
-//                    //TODO decrease fitness
-//                }
-//
-//            } else {
-//                if(students[studentNumber].required[classNumber] == 1){
-//                    //not assigned and required
-//                    //TODO decrease fitness
-//                } else{
-//                    //not assigned and not required
-//                    //TODO increase fitness
-//                }
-//            }
-
+            classPreferenceTotal += preferences[i]*assigned;
         }
 
         //check allocations of students to practical and tutorials (first two constraints)
@@ -97,47 +76,40 @@ public class DNA {
             Module module = modules[moduleNumber];
             int numberOfAssignedTutorials = tutorialCount[i];
             int numberOfAssignedPracticals = practicalCount[i];
+
             if(students[studentNumber].modules[moduleNumber] == 1){
+                //student takes module
                 if(module.hasTutorial){
-                fitness += (float) 1/(1+ Math.abs(numberOfAssignedTutorials-1));
+                    if(numberOfAssignedTutorials <= 0) missingAllocations++;
+                    else if(numberOfAssignedTutorials > 1) extraAllocations+= numberOfAssignedTutorials-1;
                 }
                 if(module.hasPractical){
-                    fitness += (float) 1/(1+ Math.abs(numberOfAssignedPracticals-1));
+                    if(numberOfAssignedPracticals <= 0) missingAllocations++;
+                    else if(numberOfAssignedPracticals > 1) extraAllocations+= numberOfAssignedPracticals-1;
                 }
             } else {
-                fitness+= 1 - numberOfAssignedPracticals - numberOfAssignedTutorials; //if tutCount & pracCount = 0  fitness will be max (1)
+                incorrectAllocations+= numberOfAssignedPracticals + numberOfAssignedTutorials;
             }
         }
 
         //check number of students per class
         for (int i = 0; i < studentsPerClass.length; i++) {
             int students = studentsPerClass[i];
-            if(students>20){
-                fitness+= (students-20)* 0.2; //penalty
-            } else {
-                fitness+= 0.5; //reward
+            int limit = classes[i].capacity;
+            if(students>limit){
+                overAllocations+= (students-limit);
             }
         }
 
         //check clashes
         for (int i = 0; i < clashes.length; i++) {
             Pair pair = clashes[i];
-            if(timetable[pair.first] == 1 & timetable[pair.second] == 1){
-                //penalty (there is a clash)
-                fitness-=0.2;
-            } else {
-                //reward (no clashes)
-                fitness+=0.02;
-            }
+            if(timetable[pair.first] == 1 & timetable[pair.second] == 1)
+                numberOfClashes++;
         }
+        fitness = 1f/(1+((w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
+                + w.incorrect*incorrectAllocations + w.over*overAllocations))) + 0.2f*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
 
-//        int score = 0;
-//        for (int i = 0; i < genes.length; i++) {
-//            if(genes[i]== target.charAt(i)){
-//                score++;
-//            }
-//        }
-//        this.fitness = (float) pow(2, score);
     }
 
     // Crossover

@@ -15,13 +15,15 @@ public class Population {
     int[] solution;
     Pair[] clashes;
     float[] preferences;
+    Weights weights;
 
-    public Population(Student[] students, Activity[] classes, Module[] modules, float mutationRate, int populationSize, int maxGenerations){
+    public Population(Student[] students, Activity[] classes, Module[] modules, float mutationRate, int populationSize, int maxGenerations, Weights weights){
         this.mutationRate = mutationRate;
         population = new DNA[populationSize];
         this.students = students;
         this.classes = classes;
         this.modules = modules;
+        this.weights = weights;
         preferences = new float[students.length*classes.length];
 
         matingPool = new ArrayList<>();
@@ -41,11 +43,12 @@ public class Population {
 
         //get clashes vector
         clashes =  manager.getClashes(classes,students,students.length);
-        preferences = manager.getStudentPreferences(students, classes);
+        preferences = manager.getStudentPreferences(students, classes, weights);
 
 
         for (int i = 0; i < population.length; i++) {
             population[i] = new DNA(students.length, classes.length, modules.length ,students, classes, modules, clashes, preferences);
+            population[i].updateFitness(weights);
         }
 
     }
@@ -53,7 +56,7 @@ public class Population {
     //Generate mating pool
     void calculateFitness(){
         for (int i = 0; i < population.length; i++) {
-            population[i].updateFitness();
+            population[i].updateFitness(weights);
         }
     }
 

@@ -33,7 +33,7 @@ public class TableExample extends JFrame
         }
 
         final Class[] columnClass = new Class[] {
-                String.class, String.class, String.class, String.class, String.class,String.class,String.class
+                String.class, String.class, String.class, String.class, String.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class
         };
         //create table model with data
         DefaultTableModel model = new DefaultTableModel(data, columns) {
@@ -48,7 +48,6 @@ public class TableExample extends JFrame
                 return columnClass[columnIndex];
             }
         };
-        JLabel label = new JLabel();
         JTable table = new JTable(model);
 
         this.add(new JScrollPane(table));
@@ -64,21 +63,21 @@ public class TableExample extends JFrame
         int popmax = 50;
         int maxGenerations = 1000;
         float mutationRate = 0.01f;
+
         Manager manager = new Manager();
-        Input input = new Input(4,6,15);
+        Input input = new Input(4,11,15);
         input.initialise();
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;
-
-        Population population = new Population(students, classes, modules, mutationRate, popmax, maxGenerations);
+        Weights weights = new Weights(3.8f,0.4f,0.9f,0.8f,0.1f,1f/7,2f/7);
+        Population population = new Population(students, classes, modules, mutationRate, popmax, maxGenerations, weights);
         //initialize population
         population.initialize();
         population.calculateFitness();
 
         System.out.println("Initial Max Fitness = " + population.getMaxFitness());
         System.out.println("Initial Average Fitness = " + population.getAverageFitness());
-
         while(!population.finished){
             // Generate mating pool
             population.naturalSelection();
@@ -110,6 +109,7 @@ public class TableExample extends JFrame
         int missingAllocations = evaluator.getMissingAllocations(fittest);
         //number of classes exceeding capacity
         int overLimitClasses = evaluator.getOverLimitClasses(fittest);
+        int inaccurateAllocations = evaluator.getInaccurateAllocations(fittest,weights);
 
 
         //population.getFittest().print();
@@ -118,9 +118,11 @@ public class TableExample extends JFrame
         System.out.println("Number of extra allocations: " + extraAllocations);
         System.out.println("Number of missing allocations: " + missingAllocations);
         System.out.println("Number of classes exceeding limit capacity: " + overLimitClasses);
+        System.out.println("Number of inaccurate allocations: " + inaccurateAllocations);
         System.out.println("\n===================================");
 
         evaluator.getStudentProperties(fittest);
+        evaluator.checkSoftConstraints(fittest, weights);
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
