@@ -154,31 +154,16 @@ public class Evaluator {
         }
     }
 
+
     int getInaccurateAllocations(DNA timetable, Weights weights){
-        int inaccuarteAllocations = 0;
+        int inaccurateAllocations = 0;
         Student[] students = timetable.students;
         Module[] modules = timetable.modules;
         Activity[] classes = timetable.classes;
-        ArrayList<Integer>[] modulePracticals = new ArrayList[modules.length];
-        ArrayList<Integer>[] moduleTutorials = new ArrayList[modules.length];
-
-        //initialise arraylists within array
-        for (int i = 0; i < modules.length; i++) {
-            modulePracticals[i] = new ArrayList<>();
-            moduleTutorials[i] = new ArrayList<>();
-        }
         Manager manager = new Manager();
-        for (int j = 0; j < modules.length;j++) {
-            for (int k = 0; k < classes.length; k++) {
-                if(classes[k].moduleIndex == j){
-                    if(classes[k].type == "Practical"){
-                        modulePracticals[j].add(k);
-                    } else{
-                        moduleTutorials[j].add(k);
-                    }
-                }
-            }
-        }
+        ArrayList<Integer>[] modulePracticals = manager.getModulePracticals(modules, classes);
+        ArrayList<Integer>[] moduleTutorials = manager.getModuleTutorials(modules, classes);
+
 
         for (int i = 0; i < timetable.numberOfStudents; i++) {
             Student student = students[i];
@@ -187,20 +172,20 @@ public class Evaluator {
                 if(student.modules[moduleNumber] == 1){
                     //takes module
                     if(module.hasPractical){
-                        ArrayList<Integer> prefferedClasses = manager.getPrefferedClasses(student,modulePracticals[moduleNumber],classes,weights);
+                        ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,modulePracticals[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, modulePracticals[moduleNumber],timetable);
-                        inaccuarteAllocations+= manager.getInaccuarteAllocations(prefferedClasses, assignedClasses);
+                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
 
                     }
                     if(module.hasTutorial){
-                        ArrayList<Integer> prefferedClasses = manager.getPrefferedClasses(student,moduleTutorials[moduleNumber],classes,weights);
+                        ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, moduleTutorials[moduleNumber],timetable);
-                        inaccuarteAllocations+= manager.getInaccuarteAllocations(prefferedClasses, assignedClasses);
+                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
                     }
                 }
             }
         }
-        return inaccuarteAllocations;
+        return inaccurateAllocations;
     }
 
     void checkSoftConstraints(DNA timetable, Weights weights){
@@ -267,7 +252,7 @@ public class Evaluator {
                     //takes module
                     System.out.println("\n\t"+ module.name);
                     if(module.hasPractical){
-                        ArrayList<Integer> prefferedClasses = manager.getPrefferedClasses(student,modulePracticals[moduleNumber],classes,weights);
+                        ArrayList<Integer> prefferedClasses = manager.getPreferredClasses(student,modulePracticals[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, modulePracticals[moduleNumber],timetable);
                         System.out.print("\n\t\t prefers: ");
                         for (int i1 = 0; i1 < prefferedClasses.size(); i1++) {
@@ -282,7 +267,7 @@ public class Evaluator {
                         //check if person was assigned one of the preferred, if not add it to variable
                     }
                     if(module.hasTutorial){
-                        ArrayList<Integer> prefferedClasses = manager.getPrefferedClasses(student,moduleTutorials[moduleNumber],classes,weights);
+                        ArrayList<Integer> prefferedClasses = manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, moduleTutorials[moduleNumber],timetable);
 
                         System.out.print("\n\t\t prefers: ");

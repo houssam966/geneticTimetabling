@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Student {
     int[] modules; //which modules are taken
     int[] required; //which classes are required
@@ -5,6 +7,7 @@ public class Student {
     int[] dayPreferences; //takes values from -5 to 5
     int[] studentPreferences; // 1 or 0
     int[] timePreferences; //1 is morning, -1 is afternoon, 0 is no preference
+    ArrayList<Integer>[] preferredClasses;
 //    int[] maxClasses; // max classes per day
     //TODO add preferences
     public Student(int[] modules, int numberOfClasses, int numberOfStudents){
@@ -47,5 +50,7 @@ public class Student {
         timePreferences[dayNumber] = preferenceNumber;
     }
 
-
+    void setPreferredClasses(ArrayList<Integer>[] preferredClasses){
+        this.preferredClasses = preferredClasses;
+    }
 }

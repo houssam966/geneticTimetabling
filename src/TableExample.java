@@ -60,9 +60,15 @@ public class TableExample extends JFrame
     public static void main(String[] args)
     {
         long start = System.currentTimeMillis();
-        int popmax = 50;
-        int maxGenerations = 1000;
-        float mutationRate = 0.01f;
+        int popmax = 150;
+        int maxGenerations = 7000;
+        float mutationRate = 0.006f;
+        float crossoverRate = 0.90f;
+        int elitismCount = 3;
+        int tournamentSize = 5;
+        float temperature = 0.95f;
+        float coolingRate = 0.0002f;
+        float adjustmentRate = 0.0006f;
 
         Manager manager = new Manager();
         Input input = new Input(4,11,15);
@@ -70,23 +76,27 @@ public class TableExample extends JFrame
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;
-        Weights weights = new Weights(3.8f,0.4f,0.9f,0.8f,0.1f,1f/7,2f/7);
-        Population population = new Population(students, classes, modules, mutationRate, popmax, maxGenerations, weights);
+        Weights weights = new Weights(0.8f,0.4f,0.9f,0.9f,0.2f,2f/7,3f/7);
+        Population population = new Population(students, classes, modules, mutationRate, crossoverRate, elitismCount, temperature, coolingRate, adjustmentRate, popmax, maxGenerations, tournamentSize, weights);
         //initialize population
         population.initialize();
         population.calculateFitness();
 
         System.out.println("Initial Max Fitness = " + population.getMaxFitness());
         System.out.println("Initial Average Fitness = " + population.getAverageFitness());
+
         while(!population.finished){
-            // Generate mating pool
+            // Update fitness and sort by fitness
             population.naturalSelection();
-            //Create next generation
+            //Create next generation (crossover)
             population.generate();
             //Mutate
             population.mutate();
+            population.improveAllocations();
             // Calculate fitness
             population.calculateFitness();
+            population.coolTemperature();
+            System.out.println(population.getAverageFitness());
         }
 
         long end = System.currentTimeMillis();
@@ -95,10 +105,15 @@ public class TableExample extends JFrame
         System.out.println("Total Generations = " + population.getGenerations());
         System.out.println("Time taken " + (end - start) + "ms");
         System.out.println("===================================");
-        System.out.println("Fittest Solution: ");
-        //number of clashes
+
         DNA fittest = population.getFittest();
         Evaluator evaluator = new Evaluator();
+
+        evaluator.getStudentProperties(fittest);
+        evaluator.checkSoftConstraints(fittest, weights);
+        System.out.println("Fittest Solution: ");
+        //number of clashes
+
         int numberOfClashes = evaluator.getNumberOfClashes(fittest);
 
         //number of incorrect class allocations (student gets a class not in his module)
@@ -120,10 +135,6 @@ public class TableExample extends JFrame
         System.out.println("Number of classes exceeding limit capacity: " + overLimitClasses);
         System.out.println("Number of inaccurate allocations: " + inaccurateAllocations);
         System.out.println("\n===================================");
-
-        evaluator.getStudentProperties(fittest);
-        evaluator.checkSoftConstraints(fittest, weights);
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

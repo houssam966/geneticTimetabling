@@ -71,22 +71,93 @@ public class Manager {
             int studentNumber = i % numberOfStudents;
             int classNumber = i / numberOfStudents;
             Activity activity = classes[classNumber];
+            int module = activity.moduleIndex;
             Student student = students[studentNumber];
             int dayNumber = getDayNumber(activity.day);
-            //TODO add other soft constraints here
-            preferences[i] = student.dayPreferences[dayNumber] * w.day
-                    + activity.timePeriod * student.timePreferences[dayNumber] * w.time; //if timeperiod is 1 and student prefers 1, max
+            if(student.modules[module] == 1){
+                //TODO add other soft constraints here
+                preferences[i] = student.dayPreferences[dayNumber] * w.day
+                        + activity.timePeriod * student.timePreferences[dayNumber] * w.time; //if timeperiod is 1 and student prefers 1, max
 
-            // day is 5/7 while timePeriod is 2/7, maximum is 1.
-            // timePeriod!= preferredTimePeriod then -2/7
-            // day = -5 and timePeriod not preferred then minimum (-1)
+                // day is 5/7 while timePeriod is 2/7, maximum is 1.
+                // timePeriod!= preferredTimePeriod then -2/7
+                // day = -5 and timePeriod not preferred then minimum (-1)
+            } else{
+                //student does not take module
+                preferences[i] = -5;
+            }
+
 
         }
         return preferences;
     }
 
-    ArrayList<Integer> getPrefferedClasses(Student student, ArrayList<Integer> moduleClasses, Activity[] allClasses, Weights w){
-        ArrayList<Integer> prefferedClasses = new ArrayList<>();
+    ArrayList<Integer>[] getModulePracticals(Module[] modules, Activity[] classes){
+        ArrayList<Integer>[] modulePracticals = new ArrayList[modules.length];
+        //initialise arraylists within array
+        for (int i = 0; i < modules.length; i++) {
+            modulePracticals[i] = new ArrayList<>();
+        }
+        for (int j = 0; j < modules.length;j++) {
+            for (int k = 0; k < classes.length; k++) {
+                if(classes[k].moduleIndex == j){
+                    if(classes[k].type == "Practical"){
+                        modulePracticals[j].add(k);
+                    }
+                }
+            }
+        }
+        return  modulePracticals;
+    }
+
+    ArrayList<Integer>[] getModuleTutorials(Module[] modules, Activity[] classes){
+        ArrayList<Integer>[] moduleTutorials = new ArrayList[modules.length];
+        //initialise arraylists within array
+        for (int i = 0; i < modules.length; i++) {
+            moduleTutorials[i] = new ArrayList<>();
+        }
+        for (int j = 0; j < modules.length;j++) {
+            for (int k = 0; k < classes.length; k++) {
+                if(classes[k].moduleIndex == j){
+                    if(classes[k].type == "Tutorial"){
+                        moduleTutorials[j].add(k);
+                    }
+                }
+            }
+        }
+        return  moduleTutorials;
+    }
+
+    ArrayList<Integer>[] getAllPreferredClasses(Student student, Module[] modules, ArrayList<Integer>[] modulePracticals, ArrayList<Integer>[] moduleTutorials, Activity[] classes, Weights weights){
+        Manager manager = new Manager();
+        ArrayList<Integer>[] allPreferredClasses = new ArrayList[modules.length];
+        //initialise arraylists within array
+        for (int j = 0; j < modules.length; j++) {
+            allPreferredClasses[j] = new ArrayList<>();
+        }
+
+        for (int moduleNumber = 0; moduleNumber < student.modules.length; moduleNumber++) {
+            Module module = modules[moduleNumber];
+            if(student.modules[moduleNumber] == 1){
+                //takes module
+                if(module.hasPractical){
+                    ArrayList<Integer> preferredClasses =
+                            manager.getPreferredClasses(student,modulePracticals[moduleNumber], classes, weights);
+                    allPreferredClasses[moduleNumber].addAll(preferredClasses);
+
+                }
+                if(module.hasTutorial){
+                    ArrayList<Integer> preferredClasses =
+                            manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
+                    allPreferredClasses[moduleNumber].addAll(preferredClasses);
+                }
+            }
+        }
+        return allPreferredClasses;
+    }
+
+    ArrayList<Integer> getPreferredClasses(Student student, ArrayList<Integer> moduleClasses, Activity[] allClasses, Weights w){
+        ArrayList<Integer> preferredClasses = new ArrayList<>();
         float maxScore = -Float.MAX_VALUE;
         for (int i1 = 0; i1 < moduleClasses.size(); i1++) {
             int classNumber = moduleClasses.get(i1);
@@ -97,13 +168,13 @@ public class Manager {
             if(score > maxScore){
                 maxScore = score;
                 //remove everything in the arraylist
-                prefferedClasses.clear();
-                prefferedClasses.add(classNumber);
+                preferredClasses.clear();
+                preferredClasses.add(classNumber);
             }else if(score == maxScore){
-                prefferedClasses.add(classNumber);
+                preferredClasses.add(classNumber);
             }
         }
-        return prefferedClasses;
+        return preferredClasses;
     }
 
     ArrayList<Integer> getAssignedClasses(int studentNumber, ArrayList<Integer> moduleClasses, DNA timetable){
@@ -118,8 +189,8 @@ public class Manager {
         return assignedClasses;
     }
 
-    int getInaccuarteAllocations(ArrayList<Integer> prefferedClasses, ArrayList<Integer> assignedClasses){
-        int inaccuarteAllocations = 0;
+    int getInaccurateAllocations(ArrayList<Integer> prefferedClasses, ArrayList<Integer> assignedClasses){
+        int inaccurateAllocations = 0;
         boolean inaccurate = true;
         int i1 = 0;
         while (i1 < prefferedClasses.size() && inaccurate) {
@@ -131,8 +202,8 @@ public class Manager {
             }
             i1++;
         }
-        if(inaccurate) inaccuarteAllocations++;
-        return inaccuarteAllocations;
+        if(inaccurate) inaccurateAllocations++;
+        return inaccurateAllocations;
     }
     int getDayNumber(String day){
         switch (day){

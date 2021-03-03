@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 public class DNA {
@@ -107,8 +108,14 @@ public class DNA {
             if(timetable[pair.first] == 1 & timetable[pair.second] == 1)
                 numberOfClashes++;
         }
-        fitness = 1f/(1+((w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
-                + w.incorrect*incorrectAllocations + w.over*overAllocations))) + 0.2f*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
+//        fitness = 1f/(1+((w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
+//                + w.incorrect*incorrectAllocations + w.over*overAllocations))) + 0.2f*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
+        fitness = 5/( 1+ (w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
+                + w.incorrect*incorrectAllocations + w.over*overAllocations)) + 3*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
+//
+// int numberOfViolatedConstraints = numberOfClashes + extraAllocations + missingAllocations + incorrectAllocations + overAllocations;
+//        fitness = 1f/(float) Math.pow((1+numberOfViolatedConstraints),2);
+//        fitness = 1f/(1+numberOfViolatedConstraints);
 
     }
 
@@ -121,6 +128,13 @@ public class DNA {
 
         // Half from one, half from the other
         for (int i = 0; i < timetable.length; i++) {
+            // Use half of parent1's genes and half of parent2's genes
+//            if (0.5 > Math.random()) {
+//                child.timetable[i] = timetable[i];
+//            } else {
+//                child.timetable[i] = partner.timetable[i];
+//            }
+            //this method is much better as it deals with chunks
             if (i > midpoint) child.timetable[i] = timetable[i];
             else child.timetable[i] = partner.timetable[i];
         }
@@ -140,6 +154,29 @@ public class DNA {
         }
     }
 
+    void improve(float adjustmentRate) {
+        Random r = new Random();
+        if(r.nextFloat() > adjustmentRate) return;
+        for (int i = 0; i < numberOfStudents; i++) {
+
+            for( int j=i; j < timetable.length; j+= numberOfStudents){
+
+                //all classes for student i
+                int classNumber = j / numberOfStudents;
+                int moduleNumber = classes[classNumber].moduleIndex;
+                if(students[i].modules[moduleNumber] == 1){
+                    ArrayList<Integer> preferredClasses = students[i].preferredClasses[moduleNumber];
+
+                    if(!preferredClasses.contains(classNumber)){
+                        timetable[j] = 0;
+                        int index  = numberOfStudents* students[i].preferredClasses[moduleNumber].get(0) + i;
+                        timetable[index] = 1;
+                    }
+                }
+
+            }
+        }
+    }
 //    public void printConstraints(){
 //        int count = 0;
 //        for (int i = 0; i < size; i++) {
