@@ -18,6 +18,14 @@ public class Student {
         studentPreferences = new int[numberOfStudents];
         timePreferences = new int[5];
     }
+    public Student(int numberOfModules ,int numberOfClasses, int numberOfStudents){
+        this.modules = new int[numberOfModules];
+        required = new int[numberOfClasses];
+        classPreferences = new int[numberOfClasses];
+        dayPreferences = new int[5];
+        studentPreferences = new int[numberOfStudents];
+        timePreferences = new int[5];
+    }
     public Student(int[] modules, int numberOfClasses, int[]dayPreferences,
                    int[]studentPreferences, int[]timePreferences){
         this.modules = modules;
@@ -28,6 +36,9 @@ public class Student {
         this.timePreferences = timePreferences;
     }
 
+    void addModule(int moduleNumber){
+        modules[moduleNumber] = 1;
+    }
     void addAllDayPreferences(int[] preferences){
         dayPreferences = preferences;
     }

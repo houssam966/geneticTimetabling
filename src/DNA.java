@@ -97,7 +97,7 @@ public class DNA {
         for (int i = 0; i < studentsPerClass.length; i++) {
             int students = studentsPerClass[i];
             int limit = classes[i].capacity;
-            if(students>limit){
+            if(students>200){
                 overAllocations+= (students-limit);
             }
         }
@@ -110,8 +110,7 @@ public class DNA {
         }
 //        fitness = 1f/(1+((w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
 //                + w.incorrect*incorrectAllocations + w.over*overAllocations))) + 0.2f*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
-        fitness = 5/( 1+ (w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations
-                + w.incorrect*incorrectAllocations + w.over*overAllocations)) + 3*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
+        fitness = 1/ (1+ (w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations + w.incorrect*incorrectAllocations + w.over*overAllocations)) + (classPreferenceTotal/(numberOfStudents*numberOfClasses));
 //
 // int numberOfViolatedConstraints = numberOfClashes + extraAllocations + missingAllocations + incorrectAllocations + overAllocations;
 //        fitness = 1f/(float) Math.pow((1+numberOfViolatedConstraints),2);
@@ -154,28 +153,99 @@ public class DNA {
         }
     }
 
-    void improve(float adjustmentRate) {
+    void improve(float adjustmentRate, boolean elite) {
         Random r = new Random();
-        if(r.nextFloat() > adjustmentRate) return;
-        for (int i = 0; i < numberOfStudents; i++) {
+        Evaluator evaluator = new Evaluator();
+        Properties properties = evaluator.getProperties(this);
+        int[] tutorialCount = properties.tutorialCount;
+        int[] practicalCount = properties.practicalCount;
 
-            for( int j=i; j < timetable.length; j+= numberOfStudents){
 
-                //all classes for student i
-                int classNumber = j / numberOfStudents;
-                int moduleNumber = classes[classNumber].moduleIndex;
-                if(students[i].modules[moduleNumber] == 1){
-                    ArrayList<Integer> preferredClasses = students[i].preferredClasses[moduleNumber];
+        for (int i = 0; i < numberOfStudents*numberOfModules; i++) {
+            int studentNumber = i%numberOfStudents;
+            int moduleNumber = i/numberOfStudents;
+            int numberOfAssignedTutorials = tutorialCount[i];
+            int numberOfAssignedPracticals = practicalCount[i];
+            Module module = modules[moduleNumber];
 
-                    if(!preferredClasses.contains(classNumber)){
-                        timetable[j] = 0;
-                        int index  = numberOfStudents* students[i].preferredClasses[moduleNumber].get(0) + i;
-                        timetable[index] = 1;
+            if(students[studentNumber].modules[moduleNumber] == 1) {
+                //if student takes module
+                if (module.hasPractical && numberOfAssignedPracticals <= 0) {
+                    float max = -Float.MAX_VALUE;
+                    int bestAllocation = -1;
+                    for (int i1 = 0; i1 < classes.length; i1++) {
+                        if (classes[i1].moduleIndex == moduleNumber && classes[i1].type == "Practical") {
+                            int index = i1 * numberOfStudents + studentNumber;
+                            if(preferences[index] > max){
+                                max = preferences[i];
+                                bestAllocation = index;
+                            }
+                        }
+                    }
+                    timetable[bestAllocation] = 1;
+                }
+                if (module.hasTutorial && numberOfAssignedTutorials <= 0) {
+                    float max = -Float.MAX_VALUE;
+                    int bestAllocation = -1;
+                    for (int i1 = 0; i1 < classes.length; i1++) {
+                        if (classes[i1].moduleIndex == moduleNumber && classes[i1].type == "Tutorial") {
+                            int index = i1 * numberOfStudents + studentNumber;
+                            if(preferences[index] > max){
+                                max = preferences[i];
+                                bestAllocation = index;
+                            }
+                        }
+                    }
+                    timetable[bestAllocation] = 1;
+                }
+                if(numberOfAssignedPracticals > 1){
+                    int removed = 0;
+                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
+                        int classNumber = j / numberOfStudents;
+                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type == "Practical"){
+                            int index = classNumber * numberOfStudents + studentNumber;
+                            timetable[index] = 0;
+                            removed++;
+                        }
+                        if(removed == numberOfAssignedPracticals-1) break;
                     }
                 }
-
+                if(numberOfAssignedTutorials > 1){
+                    int removed = 0;
+                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
+                        int classNumber = j / numberOfStudents;
+                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type == "Tutorial"){
+                            int index = classNumber * numberOfStudents + studentNumber;
+                            timetable[index] = 0;
+                            removed++;
+                        }
+                        if(removed == numberOfAssignedTutorials-1) break;
+                    }
+                }
             }
         }
+        if(!elite){
+            for (int i = 0; i < numberOfStudents; i++) {
+                for( int j=i; j < timetable.length; j+= numberOfStudents){
+                    //all classes for student i
+                    int classNumber = j / numberOfStudents;
+                    int moduleNumber = classes[classNumber].moduleIndex;
+                    //remove extra allocations
+                    if(students[i].required[classNumber] == 0 && timetable[j] == 1) timetable[j] = 0;
+                    //remove incorrect allocations
+                    if(students[i].modules[moduleNumber] == 0 && timetable[j] == 1) timetable[j] = 0;
+                    ArrayList<Integer> preferred = students[i].preferredClasses[moduleNumber];
+                    if(students[i].required[classNumber] == 1 && timetable[j] == 1 && r.nextFloat() < adjustmentRate){
+                        if(!preferred.contains(classNumber)){
+                            timetable[j] = 0;
+                            int index = preferred.get(r.nextInt(preferred.size())) * numberOfStudents + i;
+                            timetable[index] = 1;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 //    public void printConstraints(){
 //        int count = 0;

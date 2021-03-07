@@ -32,9 +32,10 @@ public class TableExample extends JFrame
             data[classNumber][student+1] = fittest.timetable[i];
         }
 
-        final Class[] columnClass = new Class[] {
-                String.class, String.class, String.class, String.class, String.class,String.class,String.class,String.class,String.class,String.class,String.class,String.class
-        };
+        final Class[] columnClass = new Class[fittest.numberOfStudents+1];
+        for (int i = 0; i < fittest.numberOfStudents+1; i++) {
+            columnClass[i] = String.class;
+        }
         //create table model with data
         DefaultTableModel model = new DefaultTableModel(data, columns) {
             @Override
@@ -61,25 +62,26 @@ public class TableExample extends JFrame
     {
         long start = System.currentTimeMillis();
         int popmax = 150;
-        int maxGenerations = 7000;
-        float mutationRate = 0.006f;
-        float crossoverRate = 0.90f;
+        int maxGenerations = 20000;
+        float mutationRate = 0.003f;
+        float crossoverRate = 0.95f;
         int elitismCount = 3;
         int tournamentSize = 5;
-        float temperature = 0.95f;
-        float coolingRate = 0.0002f;
-        float adjustmentRate = 0.0006f;
+        float temperature = 1f;
+        float coolingRate = 0.00f;
+        float adjustmentRate = 0.01f;
 
         Manager manager = new Manager();
-        Input input = new Input(4,11,15);
+        Input input = new Input(4,80,15);
         input.initialise();
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;
-        Weights weights = new Weights(0.8f,0.4f,0.9f,0.9f,0.2f,2f/7,3f/7);
+        Weights weights = new Weights(0.5f,0.7f,0.9f,0.9f,0.2f,1f/7,2f/7);
         Population population = new Population(students, classes, modules, mutationRate, crossoverRate, elitismCount, temperature, coolingRate, adjustmentRate, popmax, maxGenerations, tournamentSize, weights);
         //initialize population
         population.initialize();
+
         population.calculateFitness();
 
         System.out.println("Initial Max Fitness = " + population.getMaxFitness());
@@ -96,16 +98,11 @@ public class TableExample extends JFrame
             // Calculate fitness
             population.calculateFitness();
             population.coolTemperature();
-            System.out.println(population.getAverageFitness());
+            System.out.println("Max: " + population.getMaxFitness() + " Average: " + population.getAverageFitness());
         }
 
+        population.calculateFitness();
         long end = System.currentTimeMillis();
-        System.out.println("Final Max Fitness = " + population.getMaxFitness());
-        System.out.println("Final Average Fitness = " + population.getAverageFitness());
-        System.out.println("Total Generations = " + population.getGenerations());
-        System.out.println("Time taken " + (end - start) + "ms");
-        System.out.println("===================================");
-
         DNA fittest = population.getFittest();
         Evaluator evaluator = new Evaluator();
 
@@ -135,6 +132,14 @@ public class TableExample extends JFrame
         System.out.println("Number of classes exceeding limit capacity: " + overLimitClasses);
         System.out.println("Number of inaccurate allocations: " + inaccurateAllocations);
         System.out.println("\n===================================");
+
+        System.out.println("Final Max Fitness = " + population.getMaxFitness());
+        System.out.println("Final Average Fitness = " + population.getAverageFitness());
+        System.out.println("Total Generations = " + population.getGenerations());
+        System.out.println("Time taken " + (end - start) + "ms");
+        System.out.println("===================================");
+
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -124,7 +124,7 @@ public class Evaluator {
             int students = studentsPerClass[i];
             //Assuming all classes have capacity of 20
             //TODO: take limit here from class object
-            if (students > 20) overLimitClasses++;
+            if (students > 200) overLimitClasses++;
         }
         return overLimitClasses;
     }
@@ -132,9 +132,6 @@ public class Evaluator {
     void getStudentProperties(DNA timetable) {
         int numberOfStudents = timetable.numberOfStudents;
         int numberOfModules = timetable.numberOfModules;
-        int numberOfClasses = timetable.numberOfClasses;
-        Student[] students = timetable.students;
-        Activity[] classes = timetable.classes;
         Module[] modules = timetable.modules;
         Properties properties = getProperties(timetable);
         int[] tutorialCount = properties.tutorialCount;
