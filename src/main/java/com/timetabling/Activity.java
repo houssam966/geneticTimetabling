@@ -1,3 +1,5 @@
+package com.timetabling;
+
 public class Activity {
     String start,end,day,staff,type;
     int moduleIndex;

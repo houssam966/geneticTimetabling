@@ -1,3 +1,5 @@
+package com.timetabling;
+
 /**
  * This class represents the properties of a timetable
  * this includes relevant information such as number of students per class or number of practicals/tutorials

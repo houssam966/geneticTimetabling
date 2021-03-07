@@ -1,3 +1,4 @@
+package com.timetabling;
 public class Pair {
     int first, second;
 

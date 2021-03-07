@@ -1,3 +1,4 @@
+package com.timetabling;
 import java.util.Random;
 
 public class Input {

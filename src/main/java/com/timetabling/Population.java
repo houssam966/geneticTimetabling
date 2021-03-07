@@ -1,3 +1,4 @@
+package com.timetabling;
 import java.util.ArrayList;
 import java.util.Random;
 

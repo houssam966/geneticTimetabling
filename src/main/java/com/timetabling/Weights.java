@@ -1,3 +1,5 @@
+package com.timetabling;
+
 public class Weights {
     float clash,extra,incorrect,missing, over, day,time;
     public Weights(float clash, float extra, float incorrect, float missing, float over, float day, float time){

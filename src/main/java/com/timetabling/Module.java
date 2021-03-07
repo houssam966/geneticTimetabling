@@ -1,3 +1,5 @@
+package com.timetabling;
+
 public class Module {
     String name;
     boolean hasTutorial;
