@@ -64,7 +64,7 @@ public class TableExample extends JFrame
     {
         long start = System.currentTimeMillis();
         int popmax = 150;
-        int maxGenerations = 20000;
+        int maxGenerations = 2000;
         float mutationRate = 0.003f;
         float crossoverRate = 0.95f;
         int elitismCount = 3;
@@ -74,8 +74,7 @@ public class TableExample extends JFrame
         float adjustmentRate = 0.01f;
 
         Manager manager = new Manager();
-        Input input = new Input(4,80,15);
-        input.initialise();
+        Input input = new Input();
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;

@@ -177,6 +177,7 @@ public class DNA {
                     int bestAllocation = -1;
                     for (int i1 = 0; i1 < classes.length; i1++) {
                         if (classes[i1].moduleIndex == moduleNumber && classes[i1].type == "Practical") {
+                            System.out.println("HERE");
                             int index = i1 * numberOfStudents + studentNumber;
                             if(preferences[index] > max){
                                 max = preferences[i];
@@ -184,11 +185,13 @@ public class DNA {
                             }
                         }
                     }
+                    System.out.println("Class length (line 187 dna): " + classes.length);
                     timetable[bestAllocation] = 1;
                 }
                 if (module.hasTutorial && numberOfAssignedTutorials <= 0) {
                     float max = -Float.MAX_VALUE;
                     int bestAllocation = -1;
+                    System.out.println(classes.length);
                     for (int i1 = 0; i1 < classes.length; i1++) {
                         if (classes[i1].moduleIndex == moduleNumber && classes[i1].type == "Tutorial") {
                             int index = i1 * numberOfStudents + studentNumber;
@@ -240,6 +243,7 @@ public class DNA {
                     if(students[i].required[classNumber] == 1 && timetable[j] == 1 && r.nextFloat() < adjustmentRate){
                         if(!preferred.contains(classNumber)){
                             timetable[j] = 0;
+                            System.out.println("Preferred size: " + preferred.size());
                             int index = preferred.get(r.nextInt(preferred.size())) * numberOfStudents + i;
                             timetable[index] = 1;
                         }
