@@ -50,7 +50,6 @@ public class Population {
     }
     void initialize(){
         Manager manager = new Manager();
-
         ArrayList<Integer>[] modulePracticals = manager.getModulePracticals(modules, classes);
         ArrayList<Integer>[] moduleTutorials = manager.getModuleTutorials(modules, classes);
         for (int i = 0; i < students.length; i++) {
@@ -183,12 +182,18 @@ public class Population {
         for (int i = 0; i < population.length; i++) {
             int fitnessPosition = getFitnessPosition(i);
             //skip mutation if this is an elite individual
-            if(fitnessPosition < this.elitismCount) continue;
+            //if(fitnessPosition < this.elitismCount) continue;
             boolean elite =  fitnessPosition < this.elitismCount;
-            population[i].improve(annealingAdjustmentRate, elite);
+            if(population[i].getFitness() < getAverageFitness() && !elite) population[i].improve(1);
+            population[i].improve(annealingAdjustmentRate);
         }
     }
 
+    void removeExtraAllocations(){
+        for (int i = 0; i < population.length; i++) {
+            population[i].removeExtraAllocations();
+        }
+    }
     void print(){
         for (int i = 0; i < population.length; i++) {
             population[i].print();
@@ -199,6 +204,7 @@ public class Population {
     }
 
     float getMaxFitness(){
+        calculateFitness();
         float maxFitness = -Float.MAX_VALUE;
         for (int i = 0; i < population.length; i++) {
             if (population[i].getFitness() > maxFitness) {

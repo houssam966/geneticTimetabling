@@ -103,7 +103,7 @@ public class Manager {
         for (int j = 0; j < modules.length;j++) {
             for (int k = 0; k < classes.length; k++) {
                 if(classes[k].moduleIndex == j){
-                    if(classes[k].type == "Practical"){
+                    if(classes[k].type.equals("Practical")){
                         modulePracticals[j].add(k);
                     }
                 }
@@ -121,7 +121,7 @@ public class Manager {
         for (int j = 0; j < modules.length;j++) {
             for (int k = 0; k < classes.length; k++) {
                 if(classes[k].moduleIndex == j){
-                    if(classes[k].type == "Tutorial"){
+                    if(classes[k].type.equals("Tutorial")){
                         moduleTutorials[j].add(k);
                     }
                 }
@@ -131,7 +131,6 @@ public class Manager {
     }
 
     ArrayList<Integer>[] getAllPreferredClasses(Student student, Module[] modules, ArrayList<Integer>[] modulePracticals, ArrayList<Integer>[] moduleTutorials, Activity[] classes, Weights weights){
-        Manager manager = new Manager();
         ArrayList<Integer>[] allPreferredClasses = new ArrayList[modules.length];
         //initialise arraylists within array
         for (int j = 0; j < modules.length; j++) {
@@ -144,13 +143,13 @@ public class Manager {
                 //takes module
                 if(module.hasPractical){
                     ArrayList<Integer> preferredClasses =
-                            manager.getPreferredClasses(student,modulePracticals[moduleNumber], classes, weights);
+                            getPreferredClasses(student,modulePracticals[moduleNumber], classes, weights);
                     allPreferredClasses[moduleNumber].addAll(preferredClasses);
 
                 }
                 if(module.hasTutorial){
                     ArrayList<Integer> preferredClasses =
-                            manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
+                            getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
                     allPreferredClasses[moduleNumber].addAll(preferredClasses);
                 }
             }
@@ -161,6 +160,7 @@ public class Manager {
     ArrayList<Integer> getPreferredClasses(Student student, ArrayList<Integer> moduleClasses, Activity[] allClasses, Weights w){
         ArrayList<Integer> preferredClasses = new ArrayList<>();
         float maxScore = -Float.MAX_VALUE;
+
         for (int i1 = 0; i1 < moduleClasses.size(); i1++) {
             int classNumber = moduleClasses.get(i1);
             Activity activity = allClasses[classNumber];

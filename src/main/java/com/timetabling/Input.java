@@ -1,4 +1,5 @@
 package com.timetabling;
+
 import java.io.*;
 import java.util.*;
 
@@ -28,9 +29,9 @@ public class Input {
     //            System.out.println(module.name + " Practicals: " + module.numOfPracticals+ " Tutorials: " + module.numOfTutorials);
             }
             classes = getClassesFromSheet(sheet,moduleNames);
-            for (int i = 0; i < classes.length; i++) {
-                System.out.println(classes[i].type);
-            }
+//            for (int i = 0; i < classes.length; i++) {
+//                System.out.println(classes[i].type);
+//            }
 //        for (int i = 0; i < classes.length; i++) {
 //            Activity activity = classes[i];
 //            System.out.println();

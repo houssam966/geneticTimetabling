@@ -206,7 +206,7 @@ public class Evaluator {
             ArrayList<Integer> tutorials = new ArrayList<>();
             for (int k = 0; k < classes.length; k++) {
                 if(classes[k].moduleIndex == j){
-                    if(classes[k].type == "Practical"){
+                    if(classes[k].type.equals("Practical")){
                         practicals.add(k);
                         modulePracticals[j].add(k);
                     } else{
