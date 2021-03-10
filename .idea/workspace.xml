@@ -3,10 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8928364c-c9b4-4281-a807-7dbf49ab753a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geneticTimetabling.iml" beforeDir="false" afterPath="$PROJECT_DIR$/geneticTimetabling.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/DNA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/DNA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/Input.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/Manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/Manager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/Population.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/Population.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java" afterDir="false" />
     </list>
@@ -34,32 +33,41 @@
         <counts>
           <entry key="iml" value="4" />
           <entry key="java" value="18" />
-          <entry key="xml" value="2" />
+          <entry key="xml" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IDEA_MODULE" value="4" />
           <entry key="JAVA" value="18" />
-          <entry key="XML" value="2" />
+          <entry key="XML" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="3933" />
-          <entry key="xml" value="8" />
+          <entry key="java" value="4109" />
+          <entry key="xml" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="3933" />
-          <entry key="XML" value="8" />
+          <entry key="JAVA" value="4109" />
+          <entry key="XML" value="9" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="211">
+              <caret line="34" column="4" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Activity.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -69,11 +77,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/DNA.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="699">
-              <caret line="307" column="97" selection-start-line="307" selection-start-column="97" selection-end-line="307" selection-end-column="97" />
+            <state relative-caret-position="266">
+              <caret line="105" selection-start-line="105" selection-end-line="105" />
               <folding>
                 <element signature="e#13976#13977#0" expanded="true" />
                 <element signature="e#14014#14015#0" expanded="true" />
@@ -83,18 +91,18 @@
                 <element signature="e#14160#14161#0" expanded="true" />
                 <element signature="e#14188#14189#0" expanded="true" />
                 <element signature="e#14215#14216#0" expanded="true" />
-                <element signature="e#14248#14249#0" expanded="true" />
-                <element signature="e#14278#14279#0" expanded="true" />
+                <element signature="e#15860#15861#0" expanded="true" />
+                <element signature="e#15890#15891#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="101" column="48" selection-start-line="101" selection-start-column="48" selection-end-line="101" selection-end-column="48" />
+            <state relative-caret-position="52">
+              <caret line="66" column="30" selection-start-line="66" selection-start-column="30" selection-end-line="66" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -106,7 +114,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
-              <caret line="19" column="58" lean-forward="true" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="58" />
+              <caret line="19" column="58" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -115,7 +123,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Manager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="932">
-              <caret line="163" column="59" lean-forward="true" selection-start-line="163" selection-start-column="59" selection-end-line="163" selection-end-column="59" />
+              <caret line="163" column="59" selection-start-line="163" selection-start-column="59" selection-end-line="163" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -141,8 +149,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Population.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="75" column="49" lean-forward="true" selection-start-line="75" selection-start-column="28" selection-end-line="75" selection-end-column="49" />
+            <state relative-caret-position="346">
+              <caret line="186" column="14" selection-start-line="186" selection-start-column="14" selection-end-line="186" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -157,15 +165,6 @@
                 <element signature="e#309#310#0" expanded="true" />
                 <element signature="e#335#336#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Module.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="40" lean-forward="true" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -193,13 +192,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/Module.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/Input.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/Manager.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/Population.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/DNA.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java" />
       </list>
     </option>
@@ -234,10 +233,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1512" />
-    <option name="y" value="-57" />
-    <option name="width" value="1696" />
-    <option name="height" value="1028" />
+    <option name="x" value="28" />
+    <option name="y" value="34" />
+    <option name="width" value="1412" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -296,7 +295,7 @@
     <property name="SearchEverywhereHistoryKey" value="mav&#9;ACTION&#9;ActivateMavenProjectsToolWindow" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1615311121127" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1615403234424" />
     <property name="full.screen.before.presentation.mode" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/pom.xml" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -366,15 +365,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1615136145547</updated>
-      <workItem from="1615136147018" duration="29592000" />
+      <workItem from="1615136147018" duration="38551000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="29592000" />
+    <option name="totallyTimeSpent" value="38551000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1512" y="-57" width="1696" height="1028" extended-state="0" />
+    <frame x="28" y="34" width="1412" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Designer" order="0" />
@@ -382,7 +381,7 @@
       <window_info id="Capture Tool" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Image Layers" order="4" />
-      <window_info content_ui="combo" id="Project" order="5" visible="true" weight="0.16203144" />
+      <window_info content_ui="combo" id="Project" order="5" visible="true" weight="0.19562043" />
       <window_info id="Structure" order="6" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="1" weight="0.2" />
@@ -390,9 +389,9 @@
       <window_info anchor="bottom" id="Database Changes" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.32891566" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.2735043" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.4611465" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.3985043" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.32771084" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.32692307" />
       <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="11" />
@@ -450,13 +449,6 @@
     <entry file="file://$PROJECT_DIR$/geneticTimetabling.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="10" selection-start-column="10" selection-end-line="34" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Module.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -476,13 +468,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="19" column="58" lean-forward="true" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Student.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -493,7 +478,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Manager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="932">
-          <caret line="163" column="59" lean-forward="true" selection-start-line="163" selection-start-column="59" selection-end-line="163" selection-end-column="59" />
+          <caret line="163" column="59" selection-start-line="163" selection-start-column="59" selection-end-line="163" selection-end-column="59" />
         </state>
       </provider>
     </entry>
@@ -504,13 +489,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Population.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="75" column="49" lean-forward="true" selection-start-line="75" selection-start-column="28" selection-end-line="75" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Activity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -518,10 +496,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Population.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="346">
+          <caret line="186" column="14" selection-start-line="186" selection-start-column="14" selection-end-line="186" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/Evaluator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="19" column="58" selection-start-line="19" selection-start-column="58" selection-end-line="19" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="34" column="4" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="66" column="30" selection-start-line="66" selection-start-column="30" selection-end-line="66" selection-end-column="30" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/DNA.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="699">
-          <caret line="307" column="97" selection-start-line="307" selection-start-column="97" selection-end-line="307" selection-end-column="97" />
+        <state relative-caret-position="266">
+          <caret line="105" selection-start-line="105" selection-end-line="105" />
           <folding>
             <element signature="e#13976#13977#0" expanded="true" />
             <element signature="e#14014#14015#0" expanded="true" />
@@ -531,18 +540,8 @@
             <element signature="e#14160#14161#0" expanded="true" />
             <element signature="e#14188#14189#0" expanded="true" />
             <element signature="e#14215#14216#0" expanded="true" />
-            <element signature="e#14248#14249#0" expanded="true" />
-            <element signature="e#14278#14279#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/timetabling/TableExample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="101" column="48" selection-start-line="101" selection-start-column="48" selection-end-line="101" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#15860#15861#0" expanded="true" />
+            <element signature="e#15890#15891#0" expanded="true" />
           </folding>
         </state>
       </provider>

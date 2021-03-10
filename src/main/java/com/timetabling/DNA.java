@@ -114,7 +114,8 @@ public class DNA {
 //                + w.incorrect*incorrectAllocations + w.over*overAllocations))) + 0.2f*(classPreferenceTotal/(numberOfStudents*numberOfClasses));
 //        fitness = 1/(1+numberOfClashes + missingAllocations + extraAllocations);
 //        fitness = 1/ (1+ (w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations + w.incorrect*incorrectAllocations + w.over*overAllocations))+ (classPreferenceTotal/(numberOfStudents*numberOfClasses));
-        fitness = -w.clash*numberOfClashes + -w.extra*extraAllocations + -w.missing*missingAllocations + -w.incorrect*incorrectAllocations +- w.over*overAllocations+ classPreferenceTotal;
+        float hardConstraintsScore = w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations + w.incorrect*incorrectAllocations + w.over*overAllocations;
+        fitness =  -(float) Math.pow((double) hardConstraintsScore ,2)+ classPreferenceTotal;
 //
 // int numberOfViolatedConstraints = numberOfClashes + extraAllocations + missingAllocations + incorrectAllocations + overAllocations;
 //        fitness = 1f/(float) Math.pow((1+numberOfViolatedConstraints),2);

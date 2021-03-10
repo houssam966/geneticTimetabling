@@ -184,7 +184,7 @@ public class Population {
             //skip mutation if this is an elite individual
             //if(fitnessPosition < this.elitismCount) continue;
             boolean elite =  fitnessPosition < this.elitismCount;
-            if(population[i].getFitness() < getAverageFitness() && !elite) population[i].improve(1);
+            //if(population[i].getFitness() < getAverageFitness() && !elite) population[i].improve(1);
             population[i].improve(annealingAdjustmentRate);
         }
     }
@@ -204,7 +204,6 @@ public class Population {
     }
 
     float getMaxFitness(){
-        calculateFitness();
         float maxFitness = -Float.MAX_VALUE;
         for (int i = 0; i < population.length; i++) {
             if (population[i].getFitness() > maxFitness) {

@@ -64,14 +64,14 @@ public class TableExample extends JFrame
     {
         long start = System.currentTimeMillis();
         int popmax = 50;
-        int maxGenerations = 500;
-        float mutationRate = 0.01f;
+        int maxGenerations = 7000;
+        float mutationRate = 0.0001f;
         float crossoverRate = 0.90f;
-        int elitismCount = 3;
+        int elitismCount = 2;
         int tournamentSize = 5;
         float temperature = 1f;
         float coolingRate = 0.02f;
-        float adjustmentRate = 0.1f;
+        float adjustmentRate = 0.9f;
 
         Manager manager = new Manager();
         Input input = new Input();
@@ -79,18 +79,17 @@ public class TableExample extends JFrame
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;
-        Weights weights = new Weights(0.9f,0.7f,0.9f,3.9f,0.2f,1f/7,2f/7);
+        Weights weights = new Weights(4.0f,0.7f,0.9f,3.9f,0.2f,1f/7,2f/7);
         Population population = new Population(students, classes, modules, mutationRate, crossoverRate, elitismCount, temperature, coolingRate, adjustmentRate, popmax, maxGenerations, tournamentSize, weights);
         //initialize population
         population.initialize();
-
+        population.calculateFitness();
 
 
         System.out.println("Initial Max Fitness = " + population.getMaxFitness());
         System.out.println("Initial Average Fitness = " + population.getAverageFitness());
-       population.calculateFitness();
-        //population.improveAllocations();
-
+        population.improveAllocations();
+        //population.removeExtraAllocations();
         while(!population.finished){
             // Update fitness and sort by fitness
 //            population.naturalSelection();
@@ -99,12 +98,15 @@ public class TableExample extends JFrame
             population.generate();
             //Mutate
             population.mutate();
-            population.removeExtraAllocations();
+            //population.improveAllocations();
+//            if(population.getGenerations() < popmax/2) population.improveAllocations();
+//            else population.removeExtraAllocations();
             // Calculate fitness
-
+            population.calculateFitness();
 //            population.coolTemperature();
             System.out.println("Max: " + population.getMaxFitness() + " Average: " + population.getAverageFitness());
         }
+        //population.improveAllocations();
         population.calculateFitness();
         long end = System.currentTimeMillis();
         DNA fittest = population.getFittest();
