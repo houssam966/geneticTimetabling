@@ -2,6 +2,12 @@ package com.timetabling;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class TableExample extends JFrame
 {
@@ -64,14 +70,15 @@ public class TableExample extends JFrame
     {
         long start = System.currentTimeMillis();
         int popmax = 50;
-        int maxGenerations = 7000;
-        float mutationRate = 0.0001f;
-        float crossoverRate = 0.90f;
-        int elitismCount = 2;
+        int maxGenerations = 150;
+        float mutationRate = 0.001f;
+        float crossoverRate = 0.95f;
+        int elitismCount = 3;
         int tournamentSize = 5;
         float temperature = 1f;
-        float coolingRate = 0.02f;
-        float adjustmentRate = 0.9f;
+        float coolingRate = 0.0001f;
+        float adjustmentRate = 1f;
+        float improvingRate = 0.2f;
 
         Manager manager = new Manager();
         Input input = new Input();
@@ -79,41 +86,105 @@ public class TableExample extends JFrame
         Module[] modules = input.modules;
         Activity[] classes = input.classes;
         Student[] students = input.students;
-        Weights weights = new Weights(4.0f,0.7f,0.9f,3.9f,0.2f,1f/7,2f/7);
-        Population population = new Population(students, classes, modules, mutationRate, crossoverRate, elitismCount, temperature, coolingRate, adjustmentRate, popmax, maxGenerations, tournamentSize, weights);
+//        try {
+//            input.createStudentsWorkbook(355, modules.length, classes);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        Weights weights = new Weights(4.0f,2.7f,0.9f,4.9f,3.2f,1f/7,2f/7);
+        Population population = new Population(students, classes, modules, mutationRate, crossoverRate, elitismCount, temperature, coolingRate, adjustmentRate, improvingRate, popmax, maxGenerations, tournamentSize, weights);
         //initialize population
         population.initialize();
+//        population.removeExceedingLimit();
+        population.improveAllocations();
+//        population.removeExtraAllocations();
+//        population.removeIncorrectAllocations();
+
         population.calculateFitness();
-
-
         System.out.println("Initial Max Fitness = " + population.getMaxFitness());
         System.out.println("Initial Average Fitness = " + population.getAverageFitness());
-        population.improveAllocations();
+//        Evaluator evaluator1 = new Evaluator();
+//        int overLimitClasses1 = evaluator1.getOverLimitClasses(population.getFittest());
+//        System.out.println("Number of classes exceeding limit capacity: " + overLimitClasses1);
+//        int[] studentsPerClass1 = evaluator1.getProperties(population.getFittest()).studentsPerClass;
+//        System.out.println("Students Per Class");
+//        for (int i = 0; i < studentsPerClass1.length; i++) {
+//            System.out.print(studentsPerClass1[i] + ", ");
+//        }
+//        population.removeExceedingLimit();
+
         //population.removeExtraAllocations();
+        ArrayList<Float> maxFitnesses = new ArrayList<>();
+        ArrayList<Float> averageFitnesses = new ArrayList<>();
+        Random r = new Random();
         while(!population.finished){
             // Update fitness and sort by fitness
 //            population.naturalSelection();
             population.calculateFitness();
+            maxFitnesses.add(population.getMaxFitness());
+            averageFitnesses.add(population.getAverageFitness());
+            System.out.println("Max: " + population.getMaxFitness() + " Average: " + population.getAverageFitness() + " Worst: " + population.population[popmax-1].getFitness() +  " Generation: " + population.getGenerations());
             //Create next generation (crossover)
             population.generate();
+//            population.calculateFitness();
             //Mutate
             population.mutate();
-            //population.improveAllocations();
-//            if(population.getGenerations() < popmax/2) population.improveAllocations();
-//            else population.removeExtraAllocations();
-            // Calculate fitness
+//            population.removeExceedingLimit();
+//            population.removeExtraAllocations();
             population.calculateFitness();
+            population.improveSoftConstraints();
+            population.improveAllocations();
+
+            //population.addMissingAllocations();
+           // population.improveSoftConstraints();
+//            if(population.getGenerations() < popmax/5) population.improveAllocations();
+//            else
+            // Calculate fitness
+//            population.calculateFitness();
 //            population.coolTemperature();
-            System.out.println("Max: " + population.getMaxFitness() + " Average: " + population.getAverageFitness());
+
         }
+
+        try {
+            FileWriter writer = new FileWriter("maxFitnesses.txt");
+            for(Float value: maxFitnesses) {
+                writer.write(value + System.lineSeparator());
+            }
+            writer.close();
+            FileWriter writer2 = new FileWriter("avgFitnesses.txt");
+            for(Float value: averageFitnesses) {
+                writer2.write(value + System.lineSeparator());
+            }
+            writer2.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         //population.improveAllocations();
         population.calculateFitness();
         long end = System.currentTimeMillis();
         DNA fittest = population.getFittest();
         Evaluator evaluator = new Evaluator();
 
-        evaluator.getStudentProperties(fittest);
-        evaluator.checkSoftConstraints(fittest, weights);
+        //evaluator.getStudentProperties(fittest);
+//        int[] studentsPerClassDNA = fittest.getStudentsPerClass();
+//        int[] studentsPerClassProperties = evaluator.getProperties(fittest).studentsPerClass;
+//        System.out.println("=============================");
+//        System.out.println("DNA: ");
+//        for (int i = 0; i < studentsPerClassDNA.length; i++) {
+//            System.out.print(studentsPerClassDNA[i] + ", ");
+//        }
+//        System.out.println();
+//        System.out.println("Properties: ");
+//        for (int i = 0; i < studentsPerClassProperties.length; i++) {
+//            System.out.print(studentsPerClassProperties[i] + ", ");
+//        }
+//        System.out.println();
+//        System.out.println("=============================");
+
+        //evaluator.checkSoftConstraints(fittest, weights);
         System.out.println("Fittest Solution: ");
         //number of clashes
 
@@ -128,7 +199,17 @@ public class TableExample extends JFrame
         //number of classes exceeding capacity
         int overLimitClasses = evaluator.getOverLimitClasses(fittest);
         int inaccurateAllocations = evaluator.getInaccurateAllocations(fittest,weights);
-
+        int[] studentsPerClass = evaluator.getProperties(fittest).studentsPerClass;
+        System.out.println("Students Per Class");
+        for (int i = 0; i < studentsPerClass.length; i++) {
+            System.out.print(studentsPerClass[i] + ", ");
+        }
+        System.out.println();
+        System.out.println("Class capacities");
+        for (int i = 0; i < classes.length; i++) {
+            System.out.print(classes[i].capacity + ", ");
+        }
+        System.out.println();
 
         //population.getFittest().print();
         System.out.println("Number of clashes: " + numberOfClashes);

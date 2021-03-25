@@ -2,6 +2,7 @@ package com.timetabling;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Manager {
     public Manager(){
@@ -63,6 +64,52 @@ public class Manager {
         return clashes.toArray(new Pair[clashes.size()]);
     }
 
+    HashMap<Integer, ArrayList<Integer>> getClashMap(Activity[] classes){
+        HashMap<Integer, ArrayList<Integer> > clashes = new HashMap<>();
+
+        for (int x = 0; x < classes.length; x++) {
+            Activity c1 = classes[x];
+            String d1 = c1.day;
+            LocalTime s1 = LocalTime.parse(c1.start);
+            LocalTime e1 = LocalTime.parse(c1.end);
+
+            for (int y = x+1; y < classes.length; y++) {
+                    Activity c2 = classes[y];
+                    String d2 = c2.day;
+                    LocalTime s2 = LocalTime.parse(c2.start);
+                    LocalTime e2 = LocalTime.parse(c2.end);
+
+                if(d1.equals(d2)){
+                    if(((s1.equals(s2) || s1.isAfter(s2)) && s1.isBefore(e2)) ||
+                            (e1.isAfter(s2) && e1.isBefore(e2)) ||
+                            ((s2.equals(s1) || s2.isAfter(s1)) && s2.isBefore(e1)) ||
+                            ((e2.isAfter(s1)) && e2.isBefore(e1))) {
+                        //there is a clash between class x and class y
+                        if(clashes.containsKey(x)){
+                            ArrayList<Integer> clashingClasses = clashes.get(x);
+                            if(!clashingClasses.contains(y)) clashingClasses.add(y);
+                            clashes.put(x, clashingClasses);
+                        } else {
+                            ArrayList<Integer> clashingClasses = new ArrayList<>();
+                            clashingClasses.add(y);
+                            clashes.put(x,clashingClasses);
+                        }
+                        if(clashes.containsKey(y)){
+                            ArrayList<Integer> clashingClasses = clashes.get(y);
+                            if(!clashingClasses.contains(x)) clashingClasses.add(x);
+                            clashes.put(y, clashingClasses);
+                        } else {
+                            ArrayList<Integer> clashingClasses = new ArrayList<>();
+                            clashingClasses.add(x);
+                            clashes.put(y,clashingClasses);
+                        }
+                    }
+                }
+            }
+        }
+
+        return clashes;
+    }
     float[] getStudentPreferences(Student[] students, Activity[] classes, Weights w){
         int numberOfStudents = students.length;
         int numberOfClasses = classes.length;
@@ -88,7 +135,6 @@ public class Manager {
                 //student does not take module
                 preferences[i] = -5;
             }
-
 
         }
         return preferences;

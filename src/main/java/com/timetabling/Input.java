@@ -135,7 +135,6 @@ public class Input {
                     case "Capacity": capacity = Integer.parseInt(text);
                 }
             }
-
             int timePeriod =  Integer.parseInt(start.substring(0,2)) >= 12? -1: 1;
             classesToReturn[index] = new Activity(start, end, day, timePeriod, type, staff, modules.indexOf(module),capacity);
             index++;
@@ -199,7 +198,7 @@ public class Input {
         return studentsToReturn;
     }
 
-    void createStudentsWorkbook(int numberOfStudents, int numberOfModules) throws IOException {
+    void createStudentsWorkbook(int numberOfStudents, int numberOfModules, Activity[] classes) throws IOException {
 
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("new sheet");
@@ -208,12 +207,29 @@ public class Input {
         headers.createCell(1).setCellValue("Module 1");
         headers.createCell(2).setCellValue("Module 2");
         headers.createCell(3).setCellValue("Module 3");
-        headers.createCell(4).setCellValue("Day Preferences");
-        headers.createCell(5).setCellValue("Time Preferences");
-        headers.createCell(6).setCellValue("Student Preferences");
+        headers.createCell(4).setCellValue("Module 4");
+        headers.createCell(5).setCellValue("Day Preferences");
+        headers.createCell(6).setCellValue("Time Preferences");
+        headers.createCell(7).setCellValue("Student Preferences");
         ArrayList<Integer> moduleIndices = new ArrayList<>();
         for (int i = 0; i < numberOfModules; i++) {
             moduleIndices.add(i);
+        }
+        int[] capacities = new int[moduleIndices.size()];
+        for (int i = 0; i < moduleIndices.size(); i++) {
+            int capacityPrac = 0;
+            int capacityTut = 0;
+            for (int j = 0; j < classes.length; j++) {
+                if(classes[j].moduleIndex == moduleIndices.get(i) && classes[j].type.equals("Practical")){
+                    capacityPrac+=classes[j].capacity;
+                }
+                if(classes[j].moduleIndex == moduleIndices.get(i) && classes[j].type.equals("Tutorial")){
+                    capacityTut+=classes[j].capacity;
+                }
+            }
+            if(capacityTut == 0) capacities[i] = capacityPrac; //if no tutotirals
+            else if(capacityPrac == 0) capacities[i] = capacityTut; // if no practicals
+            else capacities[i] = capacityPrac < capacityTut? capacityPrac: capacityTut;
         }
 
         for (int i = 1; i <= numberOfStudents; i++) {
@@ -223,12 +239,26 @@ public class Input {
             row.createCell(1).setCellValue(moduleIndices.get(0));
             row.createCell(2).setCellValue(moduleIndices.get(1));
             row.createCell(3).setCellValue(moduleIndices.get(2));
+            row.createCell(4).setCellValue(moduleIndices.get(3));
+            capacities[moduleIndices.get(0)]--;
+            if(capacities[moduleIndices.get(0)] <= 0) moduleIndices.remove(0);
+
+            capacities[moduleIndices.get(1)]--;
+            if(capacities[moduleIndices.get(1)] <= 0) moduleIndices.remove(1);
+
+            capacities[moduleIndices.get(2)]--;
+            if(capacities[moduleIndices.get(2)] <= 0) moduleIndices.remove(2);
+
+            capacities[moduleIndices.get(3)]--;
+            if(capacities[moduleIndices.get(3)] <= 0) moduleIndices.remove(3);
+
+
             int[] studentPreferences = new int[numberOfStudents];
             int[] dayPreferences = new int[5];
             int[] timePreferences = new int[5];
             Random r = new Random();
             for (int j = 0; j < numberOfStudents; j++) {
-                if(r.nextFloat() > 0.9) studentPreferences[j] = 1;
+                if(r.nextFloat() > 0.95) studentPreferences[j] = 1;
                 else studentPreferences[j] = 0;
             }
             for (int j = 0; j < 5; j++) {
@@ -237,9 +267,9 @@ public class Input {
                 dayPreferences[j] = dayPreference;
                 timePreferences[j] = timePreference;
             }
-            row.createCell(4).setCellValue(Arrays.toString(dayPreferences));
-            row.createCell(5).setCellValue(Arrays.toString(timePreferences));
-            row.createCell(6).setCellValue(Arrays.toString(studentPreferences));
+            row.createCell(5).setCellValue(Arrays.toString(dayPreferences));
+            row.createCell(6).setCellValue(Arrays.toString(timePreferences));
+            row.createCell(7).setCellValue(Arrays.toString(studentPreferences));
         }
         // Write the output to a file
         try (OutputStream fileOut = new FileOutputStream("workbook.xlsx")) {

@@ -8,7 +8,7 @@ public class Evaluator {
         int numberOfClashes = 0;
         for (int i = 0; i < timetable.clashes.length; i++) {
             Pair pair = timetable.clashes[i];
-            if(timetable.timetable[pair.first] == 1 & timetable.timetable[pair.second] == 1){
+            if(timetable.timetable[pair.first] == 1 && timetable.timetable[pair.second] == 1){
                 //there is a clash
                 numberOfClashes++;
             }
@@ -111,6 +111,7 @@ public class Evaluator {
                 //student takes module
                 if(numberOfAssignedPracticals > 1)
                     extraAllocations+= numberOfAssignedPracticals-1;
+
                 if(numberOfAssignedTutorials > 1)
                     extraAllocations+= numberOfAssignedTutorials -1;
             }
@@ -124,9 +125,8 @@ public class Evaluator {
         //check number of students per class
         for (int i = 0; i < studentsPerClass.length; i++) {
             int students = studentsPerClass[i];
-            //Assuming all classes have capacity of 20
-            //TODO: take limit here from class object
-            if (students > 200) overLimitClasses++;
+            int limit = timetable.classes[i].capacity;
+            if (students > limit) overLimitClasses+= students-limit;
         }
         return overLimitClasses;
     }
@@ -149,6 +149,7 @@ public class Evaluator {
             System.out.print("Student " + studentNumber + ": ");
             System.out.print(module.name + ": " + numberOfAssignedPracticals + " Practicals, "
                     + numberOfAssignedTutorials + " Tutorials");
+            if(numberOfAssignedPracticals > 1 || numberOfAssignedTutorials > 1) System.out.print("HEEEEEEEEEEREEEEEEEEE");
             System.out.println();
         }
     }
