@@ -60,7 +60,6 @@ public class Manager {
                 }
             }
         }
-
         return clashes.toArray(new Pair[clashes.size()]);
     }
 
@@ -110,6 +109,7 @@ public class Manager {
 
         return clashes;
     }
+
     float[] getStudentPreferences(Student[] students, Activity[] classes, Weights w){
         int numberOfStudents = students.length;
         int numberOfClasses = classes.length;
@@ -250,7 +250,9 @@ public class Manager {
             }
             i1++;
         }
-        if(inaccurate) inaccurateAllocations++;
+        if(inaccurate) {
+            inaccurateAllocations++;
+        }
         return inaccurateAllocations;
     }
     int getDayNumber(String day){

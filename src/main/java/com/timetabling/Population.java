@@ -78,18 +78,12 @@ public class Population {
 
     }
 
-    //Generate mating pool
-    void calculateFitness(){
+    public void calculateFitness(){
         //parallel processing
         IntStream.range(0, population.length).parallel()
                 .forEach(i -> population[i].updateFitness(weights));
-        Arrays.sort(population, Collections.reverseOrder());
-
-        //        for (int i = 0; i < population.length; i++) {
-//            population[i].updateFitness(weights);
-//        }
-
     }
+
 
     /**
      * Sorts individuals by fitness, helps with elitism count
@@ -117,7 +111,6 @@ public class Population {
             DNA tournamentIndividual = population[index];
             tournament.population[i] = tournamentIndividual;
         }
-
         // Return the best
         return tournament.getFittest();
     }
@@ -156,46 +149,46 @@ public class Population {
         }
         population = newPopulation; //replace current population with newly generated population
         generations++;
-        if(generations == maxGenerations || getMaxFitness() == 1) finished = true;
-//        if(getMaxFitness() == 1) finished = true;
+        if(generations == maxGenerations) finished = true;
+//        if(getMaxFitness() >= 0) finished = true;
     }
 
-    //adaptive mutation
 
+    /**
+     * Static Mutation function
+     */
     void mutate(){
         Arrays.sort(population, Collections.reverseOrder());
         //skip mutation if this is an elite individual
-
         for (int i = elitismCount; i < population.length; i++) {
-            float maxFitness = getMaxFitness();
-            float averageFitness = getAverageFitness();
-            DNA individual = population[i];
-            //int fitnessPosition = getFitnessPosition(i);
+            population[i].mutate(mutationRate);
 
-            // Calculate adaptive mutation rate
-            float adaptiveMutationRate = this.mutationRate;
-
+        }
+    }
+//
+//    void mutate(){
+//        for (int i = 0; i < population.length; i++) {
+//            float maxFitness = getMaxFitness();
+//            float averageFitness = getAverageFitness();
+//            DNA individual = population[i];
+//            // Calculate adaptive mutation rate
+//            float adaptiveMutationRate = this.mutationRate;
+//
 //            if (individual.getFitness() > averageFitness) {
 //                float fitnessDelta1 =  maxFitness - individual.getFitness();
 //                float fitnessDelta2 = maxFitness - averageFitness;
 //                adaptiveMutationRate = (fitnessDelta1 / fitnessDelta2) * this.mutationRate;
 //            }
+//            population[i].mutate(adaptiveMutationRate);
+//        }
+//    }
 
-            population[i].mutate(adaptiveMutationRate);
-
-        }
-    }
-
-//    //annealing mutation
+//
 //    void mutate(){
 //        for (int i = 0; i < population.length; i++) {
-//            int fitnessPosition = getFitnessPosition(i);
-//            //skip mutation if this is an elite individual
-//            if(fitnessPosition >= this.elitismCount){
-//                // Calculate adaptive mutation rate
-//                float annealingMutationRate = this.mutationRate * this.temperature;
-//                population[i].mutate(annealingMutationRate);
-//            }
+//            // Calculate annealing mutation rate
+//            float annealingMutationRate = this.mutationRate * this.temperature;
+//            population[i].mutate(annealingMutationRate);
 //
 //        }
 //    }
@@ -205,9 +198,13 @@ public class Population {
     }
 
     void improveAllocations(){
-        // * this.temperature
         Arrays.sort(population, Collections.reverseOrder());
         AtomicReference<Float> adaptiveAdjustmentRate = new AtomicReference<>(this.adjustmentRate * this.temperature);
+//        for (int i = 0; i < population.length; i++) {
+//            boolean elite =  i < this.elitismCount;
+////                    if(elite) System.out.println(i + " Fitness: " + population[i].getFitness());
+//            if(!elite) population[i].improve(adaptiveAdjustmentRate.get());
+//        }
         IntStream.range(0, population.length).parallel()
                 .forEach(i -> {
 //                    DNA individual = population[i];
@@ -228,6 +225,7 @@ public class Population {
 
                 });
     }
+
     void removeExceedingLimit(){
         IntStream.range(0, population.length).parallel()
                 .forEach(i -> {

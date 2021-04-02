@@ -2,6 +2,7 @@ package com.timetabling;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
@@ -15,9 +16,12 @@ public class Input {
     public Input(){
         initialise();
   }
+
     void initialise() {
+
         try {
-            InputStream inp = new FileInputStream(new File("/Users/houssammahlous/Documents/uni/year3/project/reader/output.xlsx"));
+            InputStream inp =  getClass().getClassLoader().getResourceAsStream("firstYearFirstTerm.xlsx");
+
             Workbook wb = WorkbookFactory.create(inp);
             Sheet sheet = wb.getSheetAt(0);
             Sheet studentsSheet = wb.getSheetAt(1);
@@ -47,15 +51,7 @@ public class Input {
 //            for (int i = 0; i < students.length; i++) {
 //                System.out.println(Arrays.toString(students[i].modules));
 //            }
-//        int[] moduleCounts = new int[modules.length];
-//        for (int i = 0; i < students.length; i++) {
-//            for (int i1 = 0; i1 < students[i].modules.length; i1++) {
-//                if(students[i].modules[i1] == 1) moduleCounts[i1]++;
-//            }
-//        }
-//        for (int i = 0; i < moduleCounts.length; i++) {
-//            System.out.println(moduleNames.get(i) + ": " + moduleCounts[i] );
-//        }
+
 //        createStudentsWorkbook(numberOfStudents, modules.length);
 //        initialiseStudents();
         } catch (FileNotFoundException e) {
@@ -144,13 +140,15 @@ public class Input {
 
     Student[] getStudentsFromSheet(Sheet sheet, int numberOfModules, int numberOfClasses){
         DataFormatter formatter = new DataFormatter();
-        Student[] studentsToReturn = new Student[sheet.getPhysicalNumberOfRows()-1];
+//        Student[] studentsToReturn = new Student[sheet.getPhysicalNumberOfRows()-1];
+        Student[] studentsToReturn = new Student[350];
         int index = -1;
         for (Row row : sheet) {
             if(index == -1){
                 index++;
                 continue;
             }
+            if(index == 350) break;
 
             int module1 = -1;int module2 = -1;int module3 = -1;
             String dayPref = "";String timePref = "";String studentPref = "";
@@ -198,6 +196,31 @@ public class Input {
         return studentsToReturn;
     }
 
+    void printClassCapacities(int numberOfModules){
+        ArrayList<Integer> moduleIndices = new ArrayList<>();
+        for (int i = 0; i < numberOfModules; i++) {
+            moduleIndices.add(i);
+        }
+        int[] capacities = new int[moduleIndices.size()];
+        for (int i = 0; i < moduleIndices.size(); i++) {
+            int capacityPrac = 0;
+            int capacityTut = 0;
+            for (int j = 0; j < classes.length; j++) {
+                if(classes[j].moduleIndex == moduleIndices.get(i) && classes[j].type.equals("Practical")){
+                    capacityPrac+=classes[j].capacity;
+                }
+                if(classes[j].moduleIndex == moduleIndices.get(i) && classes[j].type.equals("Tutorial")){
+                    capacityTut+=classes[j].capacity;
+                }
+            }
+            if(capacityTut == 0) capacities[i] = capacityPrac; //if no tutotirals
+            else if(capacityPrac == 0) capacities[i] = capacityTut; // if no practicals
+            else capacities[i] = capacityPrac < capacityTut? capacityPrac: capacityTut;
+        }
+        for (int i = 0; i < capacities.length; i++) {
+            System.out.println(capacities[i]);
+        }
+    }
     void createStudentsWorkbook(int numberOfStudents, int numberOfModules, Activity[] classes) throws IOException {
 
         Workbook wb = new XSSFWorkbook();
@@ -231,7 +254,6 @@ public class Input {
             else if(capacityPrac == 0) capacities[i] = capacityTut; // if no practicals
             else capacities[i] = capacityPrac < capacityTut? capacityPrac: capacityTut;
         }
-
         for (int i = 1; i <= numberOfStudents; i++) {
             Row row = sheet.createRow(i);
             Collections.shuffle(moduleIndices);
@@ -274,6 +296,47 @@ public class Input {
         // Write the output to a file
         try (OutputStream fileOut = new FileOutputStream("workbook.xlsx")) {
             wb.write(fileOut);
+        }
+    }
+
+    public void saveSolution(DNA solution){
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("Solution");
+        Row headers = sheet.createRow(0);
+        headers.createCell(0).setCellValue("Students");
+        headers.createCell(1).setCellValue("Classes");
+
+        HashMap<Integer, ArrayList<Integer>> allocations = new HashMap<>();
+        for (int i = 0; i < solution.timetable.length; i++) {
+            int numberOfStudents = solution.numberOfStudents;
+            int studentNumber = i%numberOfStudents;
+            int classNumber = i/numberOfStudents;
+            if(solution.timetable[i] == 0) continue;
+            if(allocations.containsKey(studentNumber)){
+                ArrayList<Integer> classes = allocations.get(studentNumber);
+                classes.add(classNumber);
+                allocations.put(studentNumber, classes);
+            } else{
+                ArrayList<Integer> classes = new ArrayList<>();
+                classes.add(classNumber);
+                allocations.put(studentNumber, classes);
+            }
+
+        }
+        for (int i = 1; i <= solution.numberOfStudents; i++) {
+            Row row = sheet.createRow(i);
+
+            row.createCell(0).setCellValue("Student" + (i-1));
+            String listString = allocations.get(i-1).stream().map(Object::toString)
+                    .collect(Collectors.joining(", "));
+            row.createCell(1).setCellValue(listString);
+        }
+        // Write the output to a file
+        try {
+            OutputStream fileOut = new FileOutputStream("solution.xlsx");
+            wb.write(fileOut);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -16,6 +16,4 @@ public class Activity {
         this.timePeriod = timePeriod;
         this.capacity = capacity;
     }
-
-
 }

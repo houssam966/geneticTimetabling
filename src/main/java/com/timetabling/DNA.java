@@ -158,37 +158,28 @@ public class DNA implements Comparable<DNA>{
         // A new child
         DNA child = new DNA(numberOfStudents, numberOfClasses, numberOfModules, students, classes, modules, clashes, clashMap, preferences);
         Random r = new Random();
-//        int midpoint = r.nextInt(timetable.length); // Pick a midpoint
         int midpoint = r.nextInt(numberOfStudents); // Pick a midpoint
 
         // Half from one, half from the other
         for (int i = 0; i < timetable.length; i++) {
-            // Use half of parent1's genes and half of parent2's genes
-//            if (0.7 > Math.random()) {
-//                child.timetable[i] = timetable[i];
-//            } else {
-//                child.timetable[i] = partner.timetable[i];
-//            }
             int studentNumber = i % numberOfStudents;
-//            this method is much better as it deals with chunks
             if (studentNumber > midpoint) child.timetable[i] = timetable[i];
             else child.timetable[i] = partner.timetable[i];
         }
         return child;
     }
 
-    // Based on a mutation probability, picks a new random character
-    void mutate(float mutationRate) {
+    public void mutate(float mutationRate) {
         Random r = new Random();
-        //for all genes(all students), pick a random number, if it's less than mutation rate, flip bits
+        //for all genes, pick a random number, if it's less than mutation rate, flip bits
         for (int i = 0; i < timetable.length; i++) {
             if(r.nextFloat() < mutationRate){
                 if(timetable[i] == 0) timetable[i] = 1;
                 else if(timetable[i] == 1) timetable[i] = 0;
             }
-
         }
     }
+
     boolean isClashing(int classNumber, int studentNumber){
         if(clashMap.containsKey(classNumber)){
             ArrayList<Integer> clashingClasses = clashMap.get(classNumber);
@@ -233,156 +224,13 @@ public class DNA implements Comparable<DNA>{
      */
     void improve(float adjustmentRate) {
         Random r = new Random();
+        if(r.nextFloat() > adjustmentRate) return;
 
-        if(r.nextFloat() > adjustmentRate) {
-            return;
-        }
-
-        if(violations[1] > 0){
-            removeExtraAllocations();
-        }
-        if(violations[3] > 0){
-            removeIncorrectAllocations();
-        }
-        if(violations[0] > 0){
-            removeClashes();
-        }
-        if(violations[4] > 0 ){
-            removeExceedingLimit();
-        }
-        if(violations[2] > 0){
-            addMissing();
-        }
-
-//
-
-//
-//        Evaluator evaluator = new Evaluator();
-//        Properties properties = evaluator.getProperties(this);
-//        int[] tutorialCount = properties.tutorialCount;
-//        int[] practicalCount = properties.practicalCount;
-//        int[] studentsPerClass = properties.studentsPerClass;
-//
-//
-//        for (int i = 0; i < numberOfStudents; i++) {
-//            for( int j=i; j < timetable.length; j+= numberOfStudents){
-//                //all classes for student i
-//                int classNumber = j / numberOfStudents;
-//                int moduleNumber = classes[classNumber].moduleIndex;
-//                //remove extra allocations
-//                if(students[i].required[classNumber] == 0 && timetable[j] == 1){
-//                    timetable[j] = 0;
-//                    studentsPerClass[classNumber]--;
-//                }
-//                //remove incorrect allocations
-//                if(students[i].modules[moduleNumber] == 0 && timetable[j] == 1){
-//                    timetable[j] = 0;
-//                    studentsPerClass[classNumber]--;
-//                }
-//                ArrayList<Integer> preferred = students[i].preferredClasses[moduleNumber];
-////                if(students[i].required[classNumber] == 1 && timetable[j] == 1){
-////                    if(!preferred.contains(classNumber)){
-////                        timetable[j] = 0;
-////                        int index = preferred.get(r.nextInt(preferred.size())) * numberOfStudents + i;
-////                        timetable[index] = 1;
-////                    }
-////                }
-//            }
-//        }
-//        for (int i = 0; i < numberOfStudents*numberOfModules; i++) {
-//            int studentNumber = i%numberOfStudents;
-//            int moduleNumber = i/numberOfStudents;
-//            int numberOfAssignedTutorials = tutorialCount[i];
-//            int numberOfAssignedPracticals = practicalCount[i];
-//            Module module = modules[moduleNumber];
-//
-//            if(students[studentNumber].modules[moduleNumber] == 1) {
-//                //if student takes module
-//                if(numberOfAssignedPracticals > 1){
-//                    //TODO: keep the best and the one that does not clash
-//                    int removed = 0;
-//                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
-//                        int classNumber = j / numberOfStudents;
-//                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Practical")){
-//                            int index = classNumber * numberOfStudents + studentNumber;
-//                            timetable[index] = 0;
-//                            studentsPerClass[classNumber]--;
-//                            practicalCount[i]--;
-//                            removed++;
-//                        }
-//                        if(removed == numberOfAssignedPracticals-1) break;
-//                    }
-//                }
-//                if(numberOfAssignedTutorials > 1){
-//                    int removed = 0;
-//                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
-//                        int classNumber = j / numberOfStudents;
-//                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Tutorial")){
-//                            int index = classNumber * numberOfStudents + studentNumber;
-//                            timetable[index] = 0;
-//                            studentsPerClass[classNumber]--;
-//                            tutorialCount[i]--;
-//                            removed++;
-//                        }
-//                        if(removed == numberOfAssignedTutorials-1) break;
-//                    }
-//                }
-//                if (module.hasPractical && numberOfAssignedPracticals <= 0) {
-//                    float max = -Float.MAX_VALUE;
-//                    int bestAllocation = -1;
-//                    for (int i1 = 0; i1 < classes.length; i1++) {
-//                        if (classes[i1].moduleIndex == moduleNumber && classes[i1].type.equals("Practical")) {
-//                            int index = i1 * numberOfStudents + studentNumber;
-//                            boolean isClashing = isClashing(i1, studentNumber);
-//                            if(!isClashing && preferences[index] > max && studentsPerClass[i1]< classes[i1].capacity){
-//                                max = preferences[index];
-//                                bestAllocation = i1;
-//                            }
-//                        }
-//                    }
-//                    if(bestAllocation!= -1){
-//                        int index = bestAllocation * numberOfStudents + studentNumber;
-//                        studentsPerClass[bestAllocation]++;
-//                        timetable[index] = 1;
-//                    }
-//                }
-//                if (module.hasTutorial && numberOfAssignedTutorials <= 0) {
-//                    float max = -Float.MAX_VALUE;
-//                    int bestAllocation = -1;
-//                    for (int i1 = 0; i1 < classes.length; i1++) {
-//                        if (classes[i1].moduleIndex == moduleNumber && classes[i1].type.equals("Tutorial")) {
-//                            int index = i1 * numberOfStudents + studentNumber;
-//                            boolean isClashing = isClashing(i1, studentNumber);
-//                            if(!isClashing && preferences[index] > max && studentsPerClass[i1]< classes[i1].capacity){
-//                                max = preferences[index];
-//                                bestAllocation = i1;
-//                            }
-//                        }
-//                    }
-//                    if(bestAllocation!= -1){
-//                        int index = bestAllocation * numberOfStudents + studentNumber;
-//                        studentsPerClass[bestAllocation]++;
-//                        timetable[index] = 1;
-//                    }
-//                }
-//            }
-//        }
-//
-//        for (int i = 0; i < clashes.length; i++) {
-//            Pair pair = clashes[i];
-//            if(timetable[pair.first] == 1 && timetable[pair.second] == 1){
-//                //there is a clash
-//                Random random = new Random();
-//                if(random.nextFloat() > 0.5){
-//                    timetable[pair.first] = 0;
-//
-//                }
-//                else{
-//                    timetable[pair.second] = 0;
-//                }
-//            }
-//        }
-//    }
+        if(violations[1] > 0) removeExtraAllocations();
+        if(violations[3] > 0) removeIncorrectAllocations();
+        if(violations[0] > 0) removeClashes();
+        if(violations[4] > 0 ) removeExceedingLimit();
+        if(violations[2] > 0) addMissing();
     }
 
     public void removeClashes(){

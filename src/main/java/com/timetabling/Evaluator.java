@@ -149,7 +149,7 @@ public class Evaluator {
             System.out.print("Student " + studentNumber + ": ");
             System.out.print(module.name + ": " + numberOfAssignedPracticals + " Practicals, "
                     + numberOfAssignedTutorials + " Tutorials");
-            if(numberOfAssignedPracticals > 1 || numberOfAssignedTutorials > 1) System.out.print("HEEEEEEEEEEREEEEEEEEE");
+            if(numberOfAssignedPracticals > 1 || numberOfAssignedTutorials > 1);
             System.out.println();
         }
     }
@@ -174,13 +174,21 @@ public class Evaluator {
                     if(module.hasPractical){
                         ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,modulePracticals[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, modulePracticals[moduleNumber],timetable);
-                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+                        int inac = manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+                        if(inac > 0){
+                            System.out.println("Student " + i + " Module: " + module.name + " Type: Practical");
+                        }
+                        inaccurateAllocations+=inac;
 
                     }
                     if(module.hasTutorial){
                         ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
                         ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, moduleTutorials[moduleNumber],timetable);
-                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+                        int inac = manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+                        if(inac > 0){
+                            System.out.println("Student " + i + " Module: " + module.name + " Type: TUTORIAL");
+                        }
+                        inaccurateAllocations+=inac;
                     }
                 }
             }
@@ -284,9 +292,39 @@ public class Evaluator {
                     }
 
                 }
-
             }
         }
-
     }
+//    int[] get(DNA timetable, Weights weights){
+//        int inaccurateAllocations = 0;
+//        Student[] students = timetable.students;
+//        Module[] modules = timetable.modules;
+//        Activity[] classes = timetable.classes;
+//        Manager manager = new Manager();
+//        ArrayList<Integer>[] modulePracticals = manager.getModulePracticals(modules, classes);
+//        ArrayList<Integer>[] moduleTutorials = manager.getModuleTutorials(modules, classes);
+//
+//
+//        for (int i = 0; i < timetable.numberOfStudents; i++) {
+//            Student student = students[i];
+//            for (int moduleNumber = 0; moduleNumber < student.modules.length; moduleNumber++) {
+//                Module module = modules[moduleNumber];
+//                if(student.modules[moduleNumber] == 1){
+//                    //takes module
+//                    if(module.hasPractical){
+//                        ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,modulePracticals[moduleNumber],classes,weights);
+//                        ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, modulePracticals[moduleNumber],timetable);
+//                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+//
+//                    }
+//                    if(module.hasTutorial){
+//                        ArrayList<Integer> preferredClasses = manager.getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
+//                        ArrayList<Integer> assignedClasses = manager.getAssignedClasses(i, moduleTutorials[moduleNumber],timetable);
+//                        inaccurateAllocations+= manager.getInaccurateAllocations(preferredClasses, assignedClasses);
+//                    }
+//                }
+//            }
+//        }
+//        return inaccurateAllocations;
+//    }
 }
