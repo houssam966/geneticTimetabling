@@ -20,6 +20,16 @@ public class Manager {
         }
     }
 
+    ArrayList<Integer> getModuleClassesByType(int moduleIndex, String type, Activity[] classes){
+        ArrayList<Integer> classIndices = new ArrayList<>();
+        for (int i = 0; i < classes.length; i++) {
+            if(classes[i].moduleIndex == moduleIndex && classes[i].type.equals(type)){
+                classIndices.add(i);
+            }
+        }
+        return classIndices;
+    }
+
     /**
      * overlap:
      * (s2<=s1<e2 || s2<e1<e2) ||
@@ -106,7 +116,6 @@ public class Manager {
                 }
             }
         }
-
         return clashes;
     }
 
@@ -140,43 +149,63 @@ public class Manager {
         return preferences;
     }
 
-    ArrayList<Integer>[] getModulePracticals(Module[] modules, Activity[] classes){
-        ArrayList<Integer>[] modulePracticals = new ArrayList[modules.length];
+    ArrayList<Integer>[] getModuleClasses(Module[] modules, Activity[] classes, String type){
+        ArrayList<Integer>[] moduleClasses = new ArrayList[modules.length];
         //initialise arraylists within array
         for (int i = 0; i < modules.length; i++) {
-            modulePracticals[i] = new ArrayList<>();
+            moduleClasses[i] = new ArrayList<>();
         }
         for (int j = 0; j < modules.length;j++) {
             for (int k = 0; k < classes.length; k++) {
                 if(classes[k].moduleIndex == j){
-                    if(classes[k].type.equals("Practical")){
-                        modulePracticals[j].add(k);
+                    if(classes[k].type.equals(type)){
+                        moduleClasses[j].add(k);
                     }
                 }
             }
         }
-        return  modulePracticals;
+        return  moduleClasses;
     }
+//    ArrayList<Integer>[] getModulePracticals(Module[] modules, Activity[] classes){
+//        ArrayList<Integer>[] modulePracticals = new ArrayList[modules.length];
+//        //initialise arraylists within array
+//        for (int i = 0; i < modules.length; i++) {
+//            modulePracticals[i] = new ArrayList<>();
+//        }
+//        for (int j = 0; j < modules.length;j++) {
+//            for (int k = 0; k < classes.length; k++) {
+//                if(classes[k].moduleIndex == j){
+//                    if(classes[k].type.equals("Practical")){
+//                        modulePracticals[j].add(k);
+//                    }
+//                }
+//            }
+//        }
+//        return  modulePracticals;
+//    }
+//
+//    ArrayList<Integer>[] getModuleTutorials(Module[] modules, Activity[] classes){
+//        ArrayList<Integer>[] moduleTutorials = new ArrayList[modules.length];
+//        //initialise arraylists within array
+//        for (int i = 0; i < modules.length; i++) {
+//            moduleTutorials[i] = new ArrayList<>();
+//        }
+//        for (int j = 0; j < modules.length;j++) {
+//            for (int k = 0; k < classes.length; k++) {
+//                if(classes[k].moduleIndex == j){
+//                    if(classes[k].type.equals("Tutorial")){
+//                        moduleTutorials[j].add(k);
+//                    }
+//                }
+//            }
+//        }
+//        return  moduleTutorials;
+//    }
 
-    ArrayList<Integer>[] getModuleTutorials(Module[] modules, Activity[] classes){
-        ArrayList<Integer>[] moduleTutorials = new ArrayList[modules.length];
-        //initialise arraylists within array
-        for (int i = 0; i < modules.length; i++) {
-            moduleTutorials[i] = new ArrayList<>();
-        }
-        for (int j = 0; j < modules.length;j++) {
-            for (int k = 0; k < classes.length; k++) {
-                if(classes[k].moduleIndex == j){
-                    if(classes[k].type.equals("Tutorial")){
-                        moduleTutorials[j].add(k);
-                    }
-                }
-            }
-        }
-        return  moduleTutorials;
-    }
-
-    ArrayList<Integer>[] getAllPreferredClasses(Student student, Module[] modules, ArrayList<Integer>[] modulePracticals, ArrayList<Integer>[] moduleTutorials, Activity[] classes, Weights weights){
+    ArrayList<Integer>[] getAllPreferredClasses(Student student, Module[] modules,
+                                                ArrayList<Integer>[] modulePracts, ArrayList<Integer>[] moduleTuts,
+                                                ArrayList<Integer>[] moduleSmgs, ArrayList<Integer>[] moduleLecs,
+                                                Activity[] classes, Weights weights){
         ArrayList<Integer>[] allPreferredClasses = new ArrayList[modules.length];
         //initialise arraylists within array
         for (int j = 0; j < modules.length; j++) {
@@ -189,13 +218,23 @@ public class Manager {
                 //takes module
                 if(module.hasPractical){
                     ArrayList<Integer> preferredClasses =
-                            getPreferredClasses(student,modulePracticals[moduleNumber], classes, weights);
+                            getPreferredClasses(student,modulePracts[moduleNumber], classes, weights);
                     allPreferredClasses[moduleNumber].addAll(preferredClasses);
 
                 }
                 if(module.hasTutorial){
                     ArrayList<Integer> preferredClasses =
-                            getPreferredClasses(student,moduleTutorials[moduleNumber],classes,weights);
+                            getPreferredClasses(student,moduleTuts[moduleNumber],classes,weights);
+                    allPreferredClasses[moduleNumber].addAll(preferredClasses);
+                }
+                if(module.hasSmallGroup){
+                    ArrayList<Integer> preferredClasses =
+                            getPreferredClasses(student,moduleSmgs[moduleNumber],classes,weights);
+                    allPreferredClasses[moduleNumber].addAll(preferredClasses);
+                }
+                if(module.hasLecture){
+                    ArrayList<Integer> preferredClasses =
+                            getPreferredClasses(student,moduleLecs[moduleNumber],classes,weights);
                     allPreferredClasses[moduleNumber].addAll(preferredClasses);
                 }
             }

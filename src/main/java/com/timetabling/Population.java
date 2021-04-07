@@ -55,12 +55,15 @@ public class Population {
     }
     void initialize(){
         Manager manager = new Manager();
-        ArrayList<Integer>[] modulePracticals = manager.getModulePracticals(modules, classes);
-        ArrayList<Integer>[] moduleTutorials = manager.getModuleTutorials(modules, classes);
+        ArrayList<Integer>[] modulePracs = manager.getModuleClasses(modules, classes, "Practical");
+        ArrayList<Integer>[] moduleTuts = manager.getModuleClasses(modules, classes, "Tutorial");
+        ArrayList<Integer>[] moduleSmgs = manager.getModuleClasses(modules, classes, "Small Group");
+        ArrayList<Integer>[] moduleLecs = manager.getModuleClasses(modules, classes, "Lecture");
         for (int i = 0; i < students.length; i++) {
             Student student = students[i];
             manager.assignClasses(student, classes); //assign required classes to students
-            ArrayList<Integer>[] allPreferredClasses = manager.getAllPreferredClasses(student,modules,modulePracticals,moduleTutorials, classes, weights);
+            ArrayList<Integer>[] allPreferredClasses = manager.getAllPreferredClasses(student,modules,
+                    modulePracs,moduleTuts, moduleSmgs, moduleLecs, classes, weights);
             student.setPreferredClasses(allPreferredClasses);
         }
 
@@ -149,7 +152,7 @@ public class Population {
         }
         population = newPopulation; //replace current population with newly generated population
         generations++;
-        if(generations == maxGenerations) finished = true;
+        if(generations >= maxGenerations) finished = true;
 //        if(getMaxFitness() >= 0) finished = true;
     }
 
@@ -199,7 +202,7 @@ public class Population {
 
     void improveAllocations(){
         Arrays.sort(population, Collections.reverseOrder());
-        AtomicReference<Float> adaptiveAdjustmentRate = new AtomicReference<>(this.adjustmentRate * this.temperature);
+        AtomicReference<Float> adaptiveAdjustmentRate = new AtomicReference<>(this.adjustmentRate);
 //        for (int i = 0; i < population.length; i++) {
 //            boolean elite =  i < this.elitismCount;
 ////                    if(elite) System.out.println(i + " Fitness: " + population[i].getFitness());
@@ -220,7 +223,7 @@ public class Population {
                     //if(fitnessPosition < this.elitismCount) continue;
                     boolean elite =  i < this.elitismCount;
 //                    if(elite) System.out.println(i + " Fitness: " + population[i].getFitness());
-                    if(!elite) population[i].improve(adaptiveAdjustmentRate.get());
+                    population[i].improve(adaptiveAdjustmentRate.get());
 
 
                 });
@@ -233,8 +236,11 @@ public class Population {
                 });
     }
     void improveSoftConstraints(){
+        Arrays.sort(population, Collections.reverseOrder());
         IntStream.range(0, population.length).parallel()
                 .forEach(i -> {
+                    boolean elite =  i < this.elitismCount;
+//                    if(!elite && population[i].getFitness() > 0)
                     population[i].improveSoftConstraints(improvingRate);
                 });
     }

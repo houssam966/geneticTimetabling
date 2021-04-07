@@ -6,12 +6,13 @@ package com.timetabling;
  * assigned to students
  */
 public class Properties {
-    int[] practicalCount;
-    int[] tutorialCount;
+    int[] practicalCount, tutorialCount, smgCount, lecCount;
     int[] studentsPerClass;
-    public Properties(int[] practicalCount, int[] tutorialCount, int[] studentsPerClass){
+    public Properties(int[] practicalCount, int[] tutorialCount, int[] smgCount, int[] lecCount, int[] studentsPerClass){
         this.practicalCount = practicalCount;
         this.tutorialCount = tutorialCount;
+        this.smgCount = smgCount;
+        this.lecCount = lecCount;
         this.studentsPerClass = studentsPerClass;
     }
 }

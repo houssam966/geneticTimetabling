@@ -33,16 +33,89 @@ public class DNA implements Comparable<DNA>{
 
         size = numberOfClasses * numberOfStudents;
         timetable = new int[size];
-        Random random = new Random();
-        //generate a random timetable
-        for (int i = 0; i < size; i++) {
-            if(random.nextFloat() > 0.5){
-                timetable[i] = 1;
-            } else {
-                timetable[i] = 0;
+        initialiseTimetable();
+//        Random random = new Random();
+//        //generate a random timetable
+//        for (int i = 0; i < size; i++) {
+//            if(random.nextFloat() > 0.5){
+//                timetable[i] = 1;
+//            } else {
+//                timetable[i] = 0;
+//            }
+//        }
+    }
+
+    private void initialiseTimetable(){
+        int[] assigned = new int[classes.length];
+        Manager manager = new Manager();
+        for (int i = 0; i < numberOfStudents; i++) {
+//            System.out.println("\n Student: " + i);
+            Student student = students[i];
+            for (int j = 0; j < student.modules.length; j++) {
+                if(student.modules[j] == 0) continue;
+                Module module = this.modules[j];
+//                System.out.println("\nModule: " + module.name + "\nAssigned");
+                if(module.hasLecture){
+                    ArrayList<Integer> lectures = manager.getModuleClassesByType(j,"Lecture", this.classes);
+                    for (int x = 0; x < lectures.size(); x++) {
+                        int classNumber = lectures.get(x);
+                        int index = classNumber * numberOfStudents + i;
+                        timetable[index] = 1;
+                        assigned[classNumber]++;
+                    }
+                }
+                if(module.hasTutorial){
+                    ArrayList<Integer> tutorials = manager.getModuleClassesByType(j,"Tutorial", this.classes);
+                    //assign all available tutorials
+                    for (int x = 0; x < tutorials.size(); x++) {
+                        int classNumber = tutorials.get(x);
+                        int index = classNumber * numberOfStudents + i;
+                        timetable[index] = 1;
+                        assigned[classNumber]++;
+                    }
+                }
             }
         }
+        for (int i = 0; i < numberOfStudents; i++) {
+            Student student = students[i];
+            for (int j = 0; j < student.modules.length; j++) {
+                if(student.modules[j] == 0) continue;
+                Module module = this.modules[j];
+                if(module.hasPractical){
+                    ArrayList<Integer> practicals = manager.getModuleClassesByType(j,"Practical", this.classes);
+                    Collections.shuffle(practicals);
+                    for (int x = 0; x < practicals.size(); x++) {
+                        int classNumber = practicals.get(x);
+                        if(assigned[classNumber] < this.classes[classNumber].capacity  && !isClashing(classNumber, i)){
+                            int index = classNumber * numberOfStudents + i;
+                            timetable[index] = 1;
+                            assigned[classNumber]++;
+                            break;
+                        }
+                    }
+                }
+                if(module.hasSmallGroup){
+                    ArrayList<Integer> smgs = manager.getModuleClassesByType(j,"Small Group", this.classes);
+                    Collections.shuffle(smgs);
+                    for (int x = 0; x < smgs.size(); x++) {
+                        int classNumber = smgs.get(x);
+                        if(assigned[classNumber] < this.classes[classNumber].capacity && !isClashing(classNumber, i)){
+                            int index = classNumber * numberOfStudents + i;
+                            timetable[index] = 1;
+                            assigned[classNumber]++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+//        System.out.println();
+//        for (int i = 0; i < timetable.length; i++) {
+//            if(i%300 == 0) System.out.println();
+//            System.out.print(timetable[i] + ", ");
+//        }
     }
+
 
     int[] getStudentsPerClass(){
         int[] studentsPerClass = new int[numberOfClasses];
@@ -65,8 +138,10 @@ public class DNA implements Comparable<DNA>{
         }
 
         int[] studentsPerClass = new int[numberOfClasses];
-        int[] tutorialCount = new int[numberOfStudents*numberOfModules];
-        int[] practicalCount = new int[numberOfStudents*numberOfModules];
+        int[] tutCount = new int[numberOfStudents * numberOfModules];
+        int[] practCount = new int[numberOfStudents * numberOfModules];
+        int[] smgCount = new int[numberOfStudents * numberOfModules];
+        int[] lecCount = new int[numberOfStudents * numberOfModules];
 
         float classPreferenceTotal = 0;
         int numberOfClashes = 0;
@@ -85,11 +160,16 @@ public class DNA implements Comparable<DNA>{
             studentsPerClass[classNumber]+= assigned; //if assigned would add 1, otherwise add 0
 
             int moduleStudentIndex = moduleNumber*numberOfStudents + studentNumber;
-            if(type.equals("Practical")){
-                practicalCount[moduleStudentIndex]+=assigned;
-            } else{
-                tutorialCount[moduleStudentIndex]+=assigned;
+            if (type.equals("Practical")) {
+                practCount[moduleStudentIndex] += assigned;
+            } else if(type.equals("Tutorial")) {
+                tutCount[moduleStudentIndex] += assigned;
+            } else if(type.equals("Small Group")) {
+                smgCount[moduleStudentIndex] += assigned;
+            } else if(type.equals("Lecture")) {
+                lecCount[moduleStudentIndex] += assigned;
             }
+
             classPreferenceTotal += preferences[i]*assigned;
         }
 
@@ -98,21 +178,31 @@ public class DNA implements Comparable<DNA>{
             int studentNumber = i%numberOfStudents;
             int moduleNumber = i/numberOfStudents;
             Module module = modules[moduleNumber];
-            int numberOfAssignedTutorials = tutorialCount[i];
-            int numberOfAssignedPracticals = practicalCount[i];
+            int assignedTuts = tutCount[i];
+            int assignedPracs = practCount[i];
+            int assignedSmgs =  smgCount[i];
+            int assignedLecs =  lecCount[i];
 
             if(students[studentNumber].modules[moduleNumber] == 1){
                 //student takes module
                 if(module.hasTutorial){
-                    if(numberOfAssignedTutorials <= 0) missingAllocations++;
-                    else if(numberOfAssignedTutorials > 1) extraAllocations+= numberOfAssignedTutorials-1;
+                    if(assignedTuts < module.numOfLectures) missingAllocations+= module.numOfTutorials - assignedTuts;
+                    else if(assignedTuts > module.numOfLectures) extraAllocations+= assignedTuts - module.numOfTutorials;
                 }
                 if(module.hasPractical){
-                    if(numberOfAssignedPracticals <= 0) missingAllocations++;
-                    else if(numberOfAssignedPracticals > 1) extraAllocations+= numberOfAssignedPracticals-1;
+                    if(assignedPracs <= 0) missingAllocations++;
+                    else if(assignedPracs > 1) extraAllocations+= assignedPracs-1;
+                }
+                if(module.hasSmallGroup){
+                    if(assignedSmgs <= 0) missingAllocations++;
+                    else if(assignedSmgs > 1) extraAllocations+= assignedSmgs-1;
+                }
+                if(module.hasLecture){
+                    if(assignedLecs < module.numOfLectures) missingAllocations+= module.numOfLectures - assignedLecs;
+                    else if(assignedLecs > module.numOfLectures) extraAllocations+= assignedLecs - module.numOfLectures;
                 }
             } else {
-                incorrectAllocations+= numberOfAssignedPracticals + numberOfAssignedTutorials;
+                incorrectAllocations+= assignedPracs + assignedTuts + assignedSmgs + assignedLecs;
             }
         }
 
@@ -142,7 +232,8 @@ public class DNA implements Comparable<DNA>{
         violations[4] = overAllocations;
         float hardConstraintsScore = w.clash*numberOfClashes + w.extra*extraAllocations + w.missing*missingAllocations + w.incorrect*incorrectAllocations + w.over*overAllocations;
 //        float hardConstraintsScore = numberOfClashes + extraAllocations + missingAllocations + incorrectAllocations + overAllocations;
-        fitness =  -(float) Math.pow((double) hardConstraintsScore ,2)+ classPreferenceTotal;
+        //(float) Math.pow((double) hardConstraintsScore ,2)
+        fitness =  - (float) Math.pow((double) hardConstraintsScore ,2) + 0.5f*classPreferenceTotal;
 //        fitness =  1000 - 5* hardConstraintsScore + classPreferenceTotal;
 //        fitness =  1/(hardConstraintsScore+1);
 //
@@ -171,12 +262,41 @@ public class DNA implements Comparable<DNA>{
 
     public void mutate(float mutationRate) {
         Random r = new Random();
+        if(r.nextFloat() > mutationRate) return;
         //for all genes, pick a random number, if it's less than mutation rate, flip bits
         for (int i = 0; i < timetable.length; i++) {
-            if(r.nextFloat() < mutationRate){
-                if(timetable[i] == 0) timetable[i] = 1;
-                else if(timetable[i] == 1) timetable[i] = 0;
+            if(timetable[i] == 0 || r.nextFloat() > mutationRate) continue;
+            int studentNumber = i % numberOfStudents;
+            int classNumber = i / numberOfStudents;
+            int moduleNumber = classes[classNumber].moduleIndex;
+
+            ArrayList<Integer> similarClasses = new ArrayList<>();
+            switch (classes[classNumber].type){
+                case "Practical":{
+                    similarClasses=modules[moduleNumber].practicals;
+                    break;
+                }
+                case "Lecture":{
+                    similarClasses=modules[moduleNumber].lectures;
+                    break;
+                }
+                case "Tutorial":{
+                    similarClasses=modules[moduleNumber].tutorials;
+                    break;
+                }
+                case "Small Group":{
+                    similarClasses=modules[moduleNumber].smgs;
+                    break;
+                }
             }
+            Collections.shuffle(similarClasses);
+            int newIndex = similarClasses.get(0)*numberOfStudents + studentNumber;
+            timetable[i] = 0;
+            timetable[newIndex] = 1;
+//            if(r.nextFloat() < mutationRate){
+//                if(timetable[i] == 0) timetable[i] = 1;
+//                else if(timetable[i] == 1) timetable[i] = 0;
+//            }
         }
     }
 
@@ -188,7 +308,6 @@ public class DNA implements Comparable<DNA>{
                 if(timetable[index] == 1){
                     return true;
                 }
-
             }
         }
         return false;
@@ -393,6 +512,9 @@ public class DNA implements Comparable<DNA>{
     void improveSoftConstraints(float improvingRate){
         Random r = new Random();
         if(r.nextFloat() > improvingRate) return;
+        Evaluator evaluator = new Evaluator();
+        Properties properties = evaluator.getProperties(this);
+        int[] studentsPerClass = properties.studentsPerClass;
         for (int i = 0; i < numberOfStudents; i++) {
             for( int j=i; j < timetable.length; j+= numberOfStudents){
                 //all classes for student i
@@ -403,10 +525,14 @@ public class DNA implements Comparable<DNA>{
                     if(!preferred.contains(classNumber)){
                         for (int x = 0; x < preferred.size(); x++) {
                             int preferredClass = preferred.get(x);
-                            if (!isClashing(preferredClass,i)){
-                                int index = preferred.get(x) * numberOfStudents + i;
+                            if (classes[preferredClass].type.equals(classes[classNumber].type)
+                                    && studentsPerClass[preferredClass] < classes[preferredClass].capacity
+                                    && !isClashing(preferredClass,i) ){
+                                int index = preferredClass * numberOfStudents + i;
                                 timetable[index] = 1;
                                 timetable[j] = 0;
+                                studentsPerClass[classNumber]--;
+                                studentsPerClass[preferredClass]++;
                                 break;
                             }
                         }
@@ -443,8 +569,10 @@ public class DNA implements Comparable<DNA>{
     public void removeExtraAllocations() {
         Evaluator evaluator = new Evaluator();
         Properties properties = evaluator.getProperties(this);
-        int[] tutorialCount = properties.tutorialCount;
-        int[] practicalCount = properties.practicalCount;
+        int[] tutCount = properties.tutorialCount;
+        int[] practCount = properties.practicalCount;
+        int[] smgCount = properties.smgCount;
+        int[] lecCount = properties.lecCount;
         int[] studentsPerClass = properties.studentsPerClass;
 //        System.out.println("=============================");
 //        System.out.println("Before: ");
@@ -455,13 +583,15 @@ public class DNA implements Comparable<DNA>{
         for (int i = 0; i < numberOfStudents*numberOfModules; i++) {
             int studentNumber = i%numberOfStudents;
             int moduleNumber = i/numberOfStudents;
-            int numberOfAssignedTutorials = tutorialCount[i];
-            int numberOfAssignedPracticals = practicalCount[i];
+            int assignedTuts = tutCount[i];
+            int assignedPracts = practCount[i];
+            int assignedSmgs = smgCount[i];
+            int assignedLecs = lecCount[i];
             Module module = modules[moduleNumber];
 
             if(students[studentNumber].modules[moduleNumber] == 1) {
                 //if student takes module
-                if(numberOfAssignedPracticals > 1){
+                if(assignedPracts > 1){
                     //TODO: keep the best and the one that does not clash
                     int removed = 0;
                     for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
@@ -470,26 +600,54 @@ public class DNA implements Comparable<DNA>{
                             int index = classNumber * numberOfStudents + studentNumber;
                             timetable[index] = 0;
                             studentsPerClass[classNumber]--;
-                            practicalCount[i]--;
+                            practCount[i]--;
                             removed++;
                         }
-                        if(removed == numberOfAssignedPracticals-1) break;
+                        if(removed == assignedPracts-1) break;
                     }
                 }
-                if(numberOfAssignedTutorials > 1){
+//                if(assignedTuts > 1){
+//                    int removed = 0;
+//                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
+//                        int classNumber = j / numberOfStudents;
+//                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Tutorial") && timetable[j] == 1){
+//                            int index = classNumber * numberOfStudents + studentNumber;
+//                            timetable[index] = 0;
+//                            studentsPerClass[classNumber]--;
+//                            tutCount[i]--;
+//                            removed++;
+//                        }
+//                        if(removed == assignedTuts-1) break;
+//                    }
+//                }
+                if(assignedSmgs > 1){
                     int removed = 0;
                     for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
                         int classNumber = j / numberOfStudents;
-                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Tutorial") && timetable[j] == 1){
+                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Small Group") && timetable[j] == 1){
                             int index = classNumber * numberOfStudents + studentNumber;
                             timetable[index] = 0;
                             studentsPerClass[classNumber]--;
-                            tutorialCount[i]--;
+                            smgCount[i]--;
                             removed++;
                         }
-                        if(removed == numberOfAssignedTutorials-1) break;
+                        if(removed == assignedSmgs-1) break;
                     }
                 }
+//                if(assignedLecs > 1){
+//                    int removed = 0;
+//                    for( int j=studentNumber; j < timetable.length; j+= numberOfStudents){
+//                        int classNumber = j / numberOfStudents;
+//                        if(classes[classNumber].moduleIndex == moduleNumber && classes[classNumber].type.equals("Lecture") && timetable[j] == 1){
+//                            int index = classNumber * numberOfStudents + studentNumber;
+//                            timetable[index] = 0;
+//                            studentsPerClass[classNumber]--;
+//                            lecCount[i]--;
+//                            removed++;
+//                        }
+//                        if(removed == assignedLecs-1) break;
+//                    }
+//                }
             }
         }
 //        int[] practicalCountAfter = evaluator.getProperties(this).practicalCount;
@@ -537,19 +695,24 @@ public class DNA implements Comparable<DNA>{
 //    }
 
     public void addMissing(){
+        Manager manager = new Manager();
         Evaluator evaluator = new Evaluator();
         Properties properties = evaluator.getProperties(this);
-        int[] tutorialCount = properties.tutorialCount;
-        int[] practicalCount = properties.practicalCount;
+        int[] tutCount = properties.tutorialCount;
+        int[] practCount = properties.practicalCount;
+        int[] smgCount = properties.smgCount;
+        int[] lecCount = properties.lecCount;
         int[] studentsPerClass = properties.studentsPerClass;
 
         for (int i = 0; i < numberOfStudents*numberOfModules; i++) {
             int studentNumber = i%numberOfStudents;
             int moduleNumber = i/numberOfStudents;
-            int numberOfAssignedTutorials = tutorialCount[i];
-            int numberOfAssignedPracticals = practicalCount[i];
+            int assignedTuts = tutCount[i];
+            int assignedPracts = practCount[i];
+            int assignedSmgs = smgCount[i];
+            int assignedLecs = lecCount[i];
             Module module = modules[moduleNumber];
-            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasPractical && numberOfAssignedPracticals <= 0) {
+            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasPractical && assignedPracts <= 0) {
                 int bestAllocation = getBestAllocation(studentNumber, moduleNumber, "Practical", studentsPerClass);
                 if(bestAllocation!= -1){
                     int index = bestAllocation * numberOfStudents + studentNumber;
@@ -557,13 +720,49 @@ public class DNA implements Comparable<DNA>{
                     timetable[index] = 1;
                 }
             }
-            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasTutorial && numberOfAssignedTutorials <= 0) {
-                int bestAllocation = getBestAllocation(studentNumber, moduleNumber, "Tutorial", studentsPerClass);
+            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasTutorial && assignedTuts < module.numOfTutorials) {
+                ArrayList<Integer> tutorials = manager.getModuleClassesByType(moduleNumber,"Tutorial", this.classes);
+                //assign all available tutorials
+                for (int x = 0; x < tutorials.size(); x++) {
+                    int classNumber = tutorials.get(x);
+                    int index = classNumber * numberOfStudents + studentNumber;
+                    if(timetable[index] == 0){
+                        timetable[index] = 1;
+                        studentsPerClass[classNumber]++;
+                    }
+                }
+                //                int bestAllocation = getBestAllocation(studentNumber, moduleNumber, "Tutorial", studentsPerClass);
+//                if(bestAllocation!= -1){
+//                    int index = bestAllocation * numberOfStudents + studentNumber;
+//                    studentsPerClass[bestAllocation]++;
+//                    timetable[index] = 1;
+//                }
+            }
+            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasSmallGroup && assignedSmgs <= 0) {
+                int bestAllocation = getBestAllocation(studentNumber, moduleNumber, "Small Group", studentsPerClass);
                 if(bestAllocation!= -1){
                     int index = bestAllocation * numberOfStudents + studentNumber;
                     studentsPerClass[bestAllocation]++;
                     timetable[index] = 1;
                 }
+            }
+            if (students[studentNumber].modules[moduleNumber] == 1 && module.hasLecture && assignedLecs < module.numOfLectures) {
+                ArrayList<Integer> lectures = manager.getModuleClassesByType(moduleNumber,"Lecture", this.classes);
+                //assign all available lectures
+                for (int x = 0; x < lectures.size(); x++) {
+                    int classNumber = lectures.get(x);
+                    int index = classNumber * numberOfStudents + studentNumber;
+                    if(timetable[index] == 0){
+                        timetable[index] = 1;
+                        studentsPerClass[classNumber]++;
+                    }
+                }
+//                int bestAllocation = getBestAllocation(studentNumber, moduleNumber, "Lecture", studentsPerClass);
+//                if(bestAllocation!= -1){
+//                    int index = bestAllocation * numberOfStudents + studentNumber;
+//                    studentsPerClass[bestAllocation]++;
+//                    timetable[index] = 1;
+//                }
             }
         }
     }
